@@ -1,222 +1,95 @@
 <?php
-include __DIR__ . "/../helpers/api.php";
+require_once __DIR__ . '/../helpers/api.php';
 
 if (API::isLoggedIn()) {
     $role = API::getUserRole();
-    if ($role === 'admin') {
-        header("Location: /admin-dashboard");
-    } elseif ($role === 'owner') {
-        header("Location: /owner-dashboard");
-    } else {
-        header("Location: /dashboard");
-    }
+    if ($role === 'admin') header("Location: admin-dashboard.php");
+    elseif ($role === 'owner') header("Location: owner-dashboard.php");
+    else header("Location: user-dashboard.php");
     exit;
 }
 
-// Get login type from URL parameter
-$type = $_GET['type'] ?? '';
-$defaultRole = in_array($type, ['admin', 'owner', 'user']) ? $type : 'user';
-
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $role = $_POST['role'] ?? $defaultRole;
-    
-    $endpoint = $role . '-login';
-    $response = API::post($endpoint, ['email' => $email, 'password' => $password]);
-    
-    if ($response['status'] ?? false) {
-        API::setToken($response['token']);
-        API::setUserRole($role);
-        API::setUser($response[$role] ?? $response['user'] ?? []);
-        
-        if ($role === 'admin') {
-            header("Location: /admin-dashboard");
-        } elseif ($role === 'owner') {
-            header("Location: /owner-dashboard");
-        } else {
-            header("Location: /dashboard");
-        }
-        exit;
-    } else {
-        $error = $response['message'] ?? 'Login failed';
-    }
-}
-
-include __DIR__ . "/../includes/header.php";
+include __DIR__ . '/../includes/header.php';
 ?>
 
-<style>
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+<div class="container" style="max-width: 500px; margin: 60px auto; padding: 20px;">
+    <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <h2 style="text-align: center; color: #1e3a8a; margin-bottom: 30px;">Login</h2>
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+        <div id="message"></div>
 
-.login-container {
-    min-height: calc(100vh - 56px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px;
-    animation: fadeIn 0.5s ease;
-}
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label" style="color: #1e3a8a; font-weight: 600;">Email</label>
+                <input type="email" name="email" class="form-control" required style="border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+            </div>
 
-.login-card {
-    background: white;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    max-width: 450px;
-    width: 100%;
-    animation: fadeInUp 0.6s ease;
-}
+            <div class="mb-3">
+                <label class="form-label" style="color: #1e3a8a; font-weight: 600;">Password</label>
+                <input type="password" name="password" class="form-control" required style="border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+            </div>
 
-.login-card h2 {
-    text-align: center;
-    font-weight: 700;
-    color: #2d3748;
-    margin-bottom: 10px;
-}
-
-.login-card p {
-    text-align: center;
-    color: #718096;
-    margin-bottom: 30px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 8px;
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.btn-login {
-    width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.btn-login:hover {
-    transform: translateY(-2px);
-}
-
-.alert {
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    background: #fee2e2;
-    color: #991b1b;
-    text-align: center;
-}
-
-.register-link {
-    text-align: center;
-    margin-top: 20px;
-    color: #718096;
-}
-
-.register-link a {
-    color: #667eea;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.register-link a:hover {
-    color: #764ba2;
-}
-
-@media (max-width: 576px) {
-    .login-card {
-        padding: 30px 20px;
-    }
-
-    .login-card h2 {
-        font-size: 1.5rem;
-    }
-}
-</style>
-
-<div class="login-container">
-    <div class="login-card">
-        <h2>Welcome Back</h2>
-        <p>Sign in <?= $type ? 'as ' . ucfirst($type) : 'to your account' ?></p>
-        
-        <?php if ($error): ?>
-            <div class="alert"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-        
-        <form method="POST">
-            <?php if (!$type): ?>
-            <div class="form-group">
-                <label>Login As</label>
-                <select name="role" required>
-                    <option value="user" <?= $defaultRole === 'user' ? 'selected' : '' ?>>User / Guest</option>
-                    <option value="owner" <?= $defaultRole === 'owner' ? 'selected' : '' ?>>Villa Owner</option>
-                    <option value="admin" <?= $defaultRole === 'admin' ? 'selected' : '' ?>>Admin</option>
+            <div class="mb-3">
+                <label class="form-label" style="color: #1e3a8a; font-weight: 600;">Login As</label>
+                <select name="role" class="form-control" style="border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                    <option value="user">User</option>
+                    <option value="owner">Villa Owner</option>
+                    <option value="admin">Administrator</option>
                 </select>
             </div>
-            <?php else: ?>
-            <input type="hidden" name="role" value="<?= htmlspecialchars($type) ?>">
-            <?php endif; ?>
-            
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" name="email" placeholder="Enter your email" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
-            
-            <button type="submit" class="btn-login">Sign In</button>
+
+            <button type="submit" class="btn w-100" style="background: #1e3a8a; color: white; padding: 12px; font-weight: 600; border-radius: 8px; border: none; margin-top: 20px;">Login</button>
         </form>
-        
-        <div class="register-link">
-            Don't have an account? <a href="/register">Sign up</a>
-        </div>
+
+        <p style="text-align: center; margin-top: 20px; color: #718096;">
+            Don't have an account? <a href="register.php" style="color: #1e3a8a; font-weight: 600;">Sign Up</a>
+        </p>
     </div>
 </div>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    const endpoint = data.role + '-login';
+
+    try {
+        const response = await fetch('/api/' + endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: data.email,
+                password: data.password
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.status) {
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('role', data.role);
+            
+            if (data.role === 'admin') {
+                localStorage.setItem('user', JSON.stringify(result.admin));
+                window.location.href = 'admin-dashboard.php';
+            } else if (data.role === 'owner') {
+                localStorage.setItem('user', JSON.stringify(result.owner));
+                window.location.href = 'owner-dashboard.php';
+            } else {
+                localStorage.setItem('user', JSON.stringify(result.user));
+                window.location.href = 'user-dashboard.php';
+            }
+        } else {
+            document.getElementById('message').innerHTML = '<div class="alert alert-danger">' + (result.message || 'Login failed') + '</div>';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('message').innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+    }
+});
+</script>
+
+<?php include __DIR__ . '/../includes/footer.php'; ?>

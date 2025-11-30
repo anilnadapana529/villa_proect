@@ -47,7 +47,7 @@ $listings = $data["listings"] ?? [];
 }
 
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     color: white;
     padding: 100px 0;
     text-align: center;
@@ -91,7 +91,7 @@ $listings = $data["listings"] ?? [];
 }
 
 .search-box button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     border: none;
     padding: 12px 30px;
     border-radius: 50px;
@@ -156,7 +156,7 @@ $listings = $data["listings"] ?? [];
 .villa-card .price {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #667eea;
+    color: #1e3a8a;
     margin-bottom: 16px;
 }
 
@@ -181,7 +181,7 @@ $listings = $data["listings"] ?? [];
 }
 
 .btn-view-villa {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     border: none;
     padding: 12px 30px;
     border-radius: 25px;
@@ -223,7 +223,7 @@ $listings = $data["listings"] ?? [];
 }
 
 .stats-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     color: white;
     padding: 60px 0;
     margin: 80px 0;

@@ -30,7 +30,7 @@ if (!empty($params)) {
 
 <style>
 .search-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     padding: 60px 0;
     margin-bottom: 40px;
 }
@@ -125,18 +125,18 @@ if (!empty($params)) {
 
 .btn-view {
     background: white;
-    border: 2px solid #667eea;
-    color: #667eea;
+    border: 2px solid #1e3a8a;
+    color: #1e3a8a;
     font-weight: 600;
 }
 
 .btn-view:hover {
-    background: #667eea;
+    background: #1e3a8a;
     color: white;
 }
 
 .btn-book {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     border: none;
     color: white;
     font-weight: 600;
@@ -157,7 +157,7 @@ if (!empty($params)) {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #667eea;
+    border-color: #1e3a8a;
     box-shadow: none;
 }
 

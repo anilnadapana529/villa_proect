@@ -32,7 +32,7 @@ $payments = API::get("admin-payments", [], $token);
 
 <style>
 .dashboard { min-height: 100vh; background: #f7fafc; }
-.sidebar { background: linear-gradient(180deg, #1e40af 0%, #7c3aed 100%); min-height: 100vh; color: white; position: fixed; width: 250px; padding: 0; }
+.sidebar { background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%); min-height: 100vh; color: white; position: fixed; width: 250px; padding: 0; }
 .sidebar-header { padding: 30px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .sidebar-header h4 { margin: 0; font-size: 1.5rem; font-weight: 700; }
 .sidebar-header p { margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem; }
@@ -48,7 +48,7 @@ $payments = API::get("admin-payments", [], $token);
 .stat-card h6 { color: #718096; font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; }
 .stat-card h3 { font-size: 2.5rem; font-weight: 700; color: #2d3748; margin: 0; }
 .stat-card .stat-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
-.stat-icon.purple { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; }
+.stat-icon.purple { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; }
 .stat-icon.green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
 .stat-icon.orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
 .stat-icon.blue { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; }
@@ -361,7 +361,7 @@ $payments = API::get("admin-payments", [], $token);
                             <option value="EUR">Euro (€)</option>
                         </select>
                     </div>
-                    <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <button style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; cursor: pointer;">
                         Save Settings
                     </button>
                 </div>
