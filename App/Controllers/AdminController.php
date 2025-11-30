@@ -38,6 +38,14 @@ class AdminController
     }
 
     /** ------------------------------
+     *  GET ADMIN DASHBOARD (Alias for stats)
+     *  ------------------------------ */
+    public function dashboard()
+    {
+        return $this->stats();
+    }
+
+    /** ------------------------------
      *  GET PENDING VILLAS
      *  ------------------------------ */
     public function pendingVillas()
@@ -46,9 +54,38 @@ class AdminController
 
         $pending = (new AdminStats())->pendingVillas();
 
+        // Map fields for Flutter app compatibility
+        $mapped = array_map(function($villa) {
+            return [
+                'id' => $villa['id'],
+                'owner_id' => $villa['owner_id'],
+                'title' => $villa['name'],
+                'name' => $villa['name'],
+                'description' => $villa['description'] ?? '',
+                'location' => $villa['location'] ?? $villa['address'] ?? '',
+                'city' => $villa['location'] ?? '',
+                'state' => $villa['location'] ?? '',
+                'address' => $villa['address'] ?? '',
+                'price_per_night' => $villa['price_per_night'] ?? '0',
+                'price' => $villa['price_per_night'] ?? '0',
+                'bedrooms' => $villa['bedrooms'] ?? 0,
+                'bathrooms' => $villa['bathrooms'] ?? 0,
+                'max_guests' => $villa['guests'] ?? 1,
+                'guests' => $villa['guests'] ?? 1,
+                'image' => $villa['image'] ?? null,
+                'images' => $villa['image'] ? [$villa['image']] : [],
+                'amenities' => $villa['amenities'] ?? '',
+                'status' => $villa['status'] ?? 'pending',
+                'rating' => $villa['average_rating'] ?? null,
+                'created_at' => $villa['created_at'] ?? date('Y-m-d H:i:s'),
+                'updated_at' => $villa['updated_at'] ?? date('Y-m-d H:i:s'),
+                'owner_name' => $villa['owner_name'] ?? null,
+            ];
+        }, $pending);
+
         Response::json([
             "status" => true,
-            "pending_villas" => $pending
+            "pending_villas" => $mapped
         ]);
     }
 
@@ -109,9 +146,37 @@ class AdminController
 
         $villas = (new Admin())->villas();
 
+        // Map fields for Flutter app compatibility
+        $mapped = array_map(function($villa) {
+            return [
+                'id' => $villa['id'],
+                'owner_id' => $villa['owner_id'],
+                'title' => $villa['name'],
+                'name' => $villa['name'],
+                'description' => $villa['description'] ?? '',
+                'location' => $villa['location'] ?? $villa['address'] ?? '',
+                'city' => $villa['location'] ?? '',
+                'state' => $villa['location'] ?? '',
+                'address' => $villa['address'] ?? '',
+                'price_per_night' => $villa['price_per_night'] ?? '0',
+                'price' => $villa['price_per_night'] ?? '0',
+                'bedrooms' => $villa['bedrooms'] ?? 0,
+                'bathrooms' => $villa['bathrooms'] ?? 0,
+                'max_guests' => $villa['guests'] ?? 1,
+                'guests' => $villa['guests'] ?? 1,
+                'image' => $villa['image'] ?? null,
+                'images' => $villa['image'] ? [$villa['image']] : [],
+                'amenities' => $villa['amenities'] ?? '',
+                'status' => $villa['status'] ?? 'pending',
+                'rating' => $villa['average_rating'] ?? null,
+                'created_at' => $villa['created_at'] ?? date('Y-m-d H:i:s'),
+                'updated_at' => $villa['updated_at'] ?? date('Y-m-d H:i:s'),
+            ];
+        }, $villas);
+
         Response::json([
             "status" => true,
-            "villas" => $villas
+            "villas" => $mapped
         ]);
     }
 
