@@ -1,51 +1,62 @@
-===============================================
-SIMPLE 3-STEP FIX
-===============================================
+═══════════════════════════════════════════════════════════════
+                 SIMPLE FIX - UPLOAD 2 FILES
+═══════════════════════════════════════════════════════════════
 
-YOU'RE GETTING "Unexpected token '<'" ERROR
-BECAUSE YOU HAVEN'T UPLOADED THE FIXED FILES YET!
+UPLOAD THESE FILES:
+───────────────────
 
-───────────────────────────────────────────────
+1. .htaccess           → /public_html/.htaccess
+2. routes.php          → /public_html/routes.php
 
-STEP 1: UPLOAD THESE 8 FILES TO YOUR SERVER
-───────────────────────────────────────────────
+═══════════════════════════════════════════════════════════════
 
-Upload these files (from this project folder to your server):
+WHAT THIS DOES:
+───────────────
 
-1. routes.php                  → Upload to project root
-2. App/Models/Admin.php        → Upload to App/Models/ folder
-3. App/Models/Owner.php        → Upload to App/Models/ folder
-4. App/Models/Booking.php      → Upload to App/Models/ folder
-5. App/Models/Villa.php        → Upload to App/Models/ folder
-6. App/Models/VillaImages.php  → Upload to App/Models/ folder
-7. App/Models/OwnerStats.php   → Upload to App/Models/ folder
-8. App/Models/UserStats.php    → Upload to App/Models/ folder
+The .htaccess now simply redirects all requests to /public/
+The routes.php now handles clean URL routing by redirecting:
 
-Use: cPanel File Manager, FTP, or SSH
+  topmost.in         → /web/pages/home.php
+  topmost.in/admin   → /web/pages/login.php?type=admin
+  topmost.in/owner   → /web/pages/login.php?type=owner
+  topmost.in/login   → /web/pages/login.php
+  topmost.in/register → /web/pages/register.php
 
-───────────────────────────────────────────────
+All API endpoints still work normally:
+  topmost.in/api/home-data
+  topmost.in/api/owner-login
+  etc.
 
-STEP 2: VERIFY THE FIX
-───────────────────────────────────────────────
+═══════════════════════════════════════════════════════════════
 
-Visit this URL in your browser:
-https://topmost.in/test-routes.php
+AFTER UPLOADING:
+────────────────
 
-Should show: "status": "FIXED"
+Test immediately:
 
-───────────────────────────────────────────────
+1. Visit: https://topmost.in
+   → Should redirect to homepage with animations
 
-STEP 3: TEST YOUR ENDPOINTS
-───────────────────────────────────────────────
+2. Visit: https://topmost.in/admin
+   → Should redirect to admin login
 
-Now test:
-- /api/owner-stats
-- /api/owner-villas
+3. Visit: https://topmost.in/owner
+   → Should redirect to owner login
 
-They should return JSON (not HTML errors)
+4. Visit: https://topmost.in/api/home-data
+   → Should return JSON (API still works)
 
-===============================================
+═══════════════════════════════════════════════════════════════
 
-THAT'S IT! NO DATABASE CHANGES NEEDED!
+WHY THIS WORKS:
+───────────────
 
-===============================================
+Simple approach:
+1. .htaccess sends everything to public/index.php
+2. public/index.php loads routes.php
+3. routes.php checks if it's a web route and redirects
+4. If not a web route, handles as API endpoint
+
+No complex regex, no router files needed!
+
+═══════════════════════════════════════════════════════════════

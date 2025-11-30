@@ -16,7 +16,32 @@ $uri = trim($uri, '/');
 
 // Get endpoint (last part of the path)
 $parts = explode('/', $uri);
-$endpoint = end($parts) ?: 'home-data';
+$endpoint = end($parts);
+
+// Special handling for web page routes
+$webRoutes = [
+    '' => '/web/pages/home.php',
+    'admin' => '/web/pages/login.php?type=admin',
+    'owner' => '/web/pages/login.php?type=owner',
+    'user' => '/web/pages/login.php?type=user',
+    'login' => '/web/pages/login.php',
+    'register' => '/web/pages/register.php',
+    'logout' => '/web/pages/logout.php',
+    'villas' => '/web/pages/villas.php',
+    'dashboard' => '/web/pages/user-dashboard.php',
+    'admin-dashboard' => '/web/pages/admin-dashboard.php',
+    'owner-dashboard' => '/web/pages/owner-dashboard.php',
+];
+
+if (isset($webRoutes[$endpoint])) {
+    header('Location: ' . $webRoutes[$endpoint]);
+    exit;
+}
+
+// Default to home-data for API if endpoint is empty
+if (empty($endpoint)) {
+    $endpoint = 'home-data';
+}
 
 // -------------------------------------------
 // Helper: Require Controller

@@ -1,20 +1,6 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
+RewriteEngine On
 
-    # Homepage - redirect to web router
-    RewriteRule ^$ web/router.php [L]
-
-    # Clean URL routes - redirect to web router
-    RewriteRule ^(admin|owner|user|login|register|logout|villas|villa|booking|dashboard|admin-dashboard|owner-dashboard)/?$ web/router.php [L]
-
-    # Don't rewrite if requesting web folder directly
-    RewriteCond %{REQUEST_URI} ^/web/
-    RewriteRule ^ - [L]
-
-    # Don't rewrite if requesting public folder directly
-    RewriteCond %{REQUEST_URI} ^/public/
-    RewriteRule ^ - [L]
-
-    # All other requests go to public directory (API)
-    RewriteRule ^(.*)$ public/$1 [L]
-</IfModule>
+# Redirect all requests to public directory
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_URI} !^/web/
+RewriteRule ^(.*)$ public/$1 [L]
