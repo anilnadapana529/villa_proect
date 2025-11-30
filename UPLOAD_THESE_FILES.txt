@@ -1,0 +1,56 @@
+===============================================
+  FILES TO UPLOAD TO FIX API ERRORS
+===============================================
+
+Upload these 6 files to your server at topmost.in:
+
+1. routes.php
+   - Fixed: Converts dashes to underscores for method names
+
+2. App/Controllers/AuthController.php
+   - Fixed: Proper namespaces and login methods (admin_login, owner_login, user_login)
+
+3. App/Core/Auth.php
+   - Fixed: Added namespace declaration
+
+4. App/Models/Admin.php
+   - Fixed: Removed incorrect require, added proper namespace and database methods
+
+5. App/Models/Owner.php
+   - Fixed: Removed incorrect require, added proper namespace and database methods
+
+6. App/Models/User.php
+   - Fixed: Removed incorrect require, added proper namespace and database methods
+
+===============================================
+  HOW TO UPLOAD
+===============================================
+
+Option 1: Using FTP/SFTP
+- Connect to your server using FileZilla or similar
+- Upload each file to its corresponding location
+
+Option 2: Using cPanel File Manager
+- Login to cPanel
+- Go to File Manager
+- Navigate to public_html folder
+- Upload each file to its location
+
+Option 3: Using SSH/Terminal
+- Use scp command to upload files
+
+===============================================
+  AFTER UPLOADING
+===============================================
+
+Test the API using: https://topmost.in/api-test.html
+
+The following endpoints should work:
+- /home-data (public)
+- /admin-login (post email + password)
+- /owner-login (post email + password)
+- /user-login (post email + password)
+- /admin-stats (requires JWT token)
+- /owner-stats (requires JWT token)
+
+===============================================
