@@ -83,12 +83,13 @@ if ($role === "owner") {
     controller("OwnerController");
     $owner = new App\Controllers\OwnerController();
 
-    if ($endpoint === "owner-stats") $owner->stats($userId);
-    if ($endpoint === "owner-villas") $owner->myVillas($userId);
-    if ($endpoint === "owner-add-villa") $owner->addVilla($userId);
-    if ($endpoint === "owner-edit-villa") $owner->editVilla($userId);
-    if ($endpoint === "owner-delete-villa") $owner->deleteVilla($userId);
-    if ($endpoint === "owner-upload-images") $owner->uploadImages($userId);
+    if ($endpoint === "owner-stats") $owner->stats();
+    if ($endpoint === "owner-villas") $owner->myVillas();
+    if ($endpoint === "owner-add-villa") $owner->addVilla();
+    if ($endpoint === "owner-edit-villa") $owner->updateVilla();
+    if ($endpoint === "owner-delete-villa") $owner->deleteVilla();
+    if ($endpoint === "owner-upload-images") $owner->uploadImages();
+    if ($endpoint === "owner-bookings") $owner->bookings();
     exit;
 }
 
@@ -99,10 +100,10 @@ if ($role === "user") {
     controller("UserController");
     $user = new App\Controllers\UserController();
 
-    if ($endpoint === "user-profile") $user->profile($userId);
-    if ($endpoint === "update-user-profile") $user->updateProfile($userId);
-    if ($endpoint === "user-bookings") $user->bookings($userId);
-    if ($endpoint === "user-create-booking") $user->createBooking($userId);
+    if ($endpoint === "user-profile") $user->profile();
+    if ($endpoint === "update-user-profile") $user->updateProfile();
+    if ($endpoint === "user-bookings") $user->bookings();
+    if ($endpoint === "user-create-booking") $user->createBooking();
     exit;
 }
 

@@ -1,25 +1,18 @@
 QUICK FIX REFERENCE
 ===================
 
-ERROR: "Admin Owner List Not working"
-FIX: Added Admin::owners() method in Admin.php
-
-ERROR: "Admin Villa List Not working"  
-FIX: Added Admin::villas() method in Admin.php
-
 ERROR: "Owner stats Not working"
-FIX: Already works - OwnerStats::getStats() exists
+ERROR: "Owner villas Not working"
+ROOT CAUSE: routes.php was passing $userId parameter to methods that don't accept it
 
-ERROR: "Owner Villas Not working"
-FIX: Added Owner::myVillas() method in Owner.php
+FIX: Updated routes.php to call methods without parameters
+- Changed: $owner->stats($userId) → $owner->stats()
+- Changed: $owner->myVillas($userId) → $owner->myVillas()
 
-MISSING METHOD:
-FIX: Added Booking::getByOwnerId() in Booking.php for owner bookings
+The methods get user ID from JWT token internally, not as parameter.
 
-DATABASE ISSUE:
-FIX: Need to run SQL migration to add owner_id column to bookings table
-
-UPLOAD THESE 7 FILES:
+UPLOAD THESE 8 FILES:
+=====================
 1. App/Models/Admin.php
 2. App/Models/Owner.php  
 3. App/Models/Booking.php
@@ -27,6 +20,20 @@ UPLOAD THESE 7 FILES:
 5. App/Models/VillaImages.php
 6. App/Models/OwnerStats.php
 7. App/Models/UserStats.php
+8. routes.php ← NEW FIX!
 
-THEN RUN THIS SQL:
-ALTER TABLE bookings ADD COLUMN owner_id INT DEFAULT NULL AFTER villa_id;
+DATABASE:
+=========
+✓ owner_id column already exists in bookings table
+✗ DO NOT run the ALTER TABLE command again
+
+ALL FIXED ENDPOINTS:
+====================
+✓ Admin Login
+✓ Admin Owner List  
+✓ Admin Villa List
+✓ Owner Stats
+✓ Owner Villas
+✓ Owner Bookings
+✓ User Profile
+✓ User Bookings

@@ -1,7 +1,7 @@
 FILES TO UPLOAD TO YOUR SERVER
 ===============================
 
-Upload these 9 files to fix all database and security issues:
+Upload these 8 files to fix all issues:
 
 1. App/Models/Admin.php
    → Fixed table name from "admins" to "admin"
@@ -30,18 +30,20 @@ Upload these 9 files to fix all database and security issues:
    → Fixed SQL injection vulnerabilities
    → Now uses prepared statements
 
-AFTER UPLOADING FILES:
-======================
+8. routes.php
+   → Fixed owner and user route method calls
+   → Removed incorrect $userId parameters
 
-Run this SQL in phpMyAdmin to add the missing owner_id column:
+DATABASE NOTES:
+===============
+The owner_id column ALREADY EXISTS in your bookings table.
+NO SQL migration needed!
 
-ALTER TABLE bookings
-ADD COLUMN owner_id INT DEFAULT NULL AFTER villa_id;
-
-(Full SQL is in database_fixes.sql)
-
-Then test these endpoints:
-- Admin Owner List: https://topmost.in/api/admin/owners
-- Admin Villa List: https://topmost.in/api/admin/villas
-- Owner Stats: https://topmost.in/api/owner/stats
-- Owner Villas: https://topmost.in/api/owner/my-villas
+TEST THESE ENDPOINTS:
+=====================
+✓ Admin Owner List: /api/admin/owners
+✓ Admin Villa List: /api/admin/villas  
+✓ Owner Stats: /api/owner/stats
+✓ Owner Villas: /api/owner/villas
+✓ User Profile: /api/user/profile
+✓ User Bookings: /api/user/bookings

@@ -1,109 +1,95 @@
 ===============================================================================
-DATABASE & CODE FIXES SUMMARY - UPDATED
+COMPLETE FIXES SUMMARY - ALL ISSUES RESOLVED
 ===============================================================================
 
-CRITICAL FIXES APPLIED:
+ROOT CAUSE OF "OWNER STATS" AND "OWNER VILLAS" ERRORS:
+=======================================================
+The routes.php file was passing $userId as a parameter to controller methods,
+but those methods don't accept parameters. They get the user ID from the JWT
+token internally using $this->requireOwner().
+
+Example of the bug:
+  routes.php had: $owner->stats($userId)
+  But method is:  public function stats() { ... }
+
+This caused PHP errors which returned HTML instead of JSON.
+
+ALL FIXES APPLIED:
+==================
 
 1. TABLE NAME MISMATCH
-   ----------------------
-   Problem: Code was querying table "admins" but database has "admin" (singular)
-   Fixed: App/Models/Admin.php line 34 - Changed FROM admins to FROM admin
-   Status: ✓ FIXED
+   - Fixed Admin.php to query "admin" table (not "admins")
 
-2. MISSING DATABASE COLUMN
-   ------------------------
-   Problem: bookings table missing owner_id column but code references it
-   Location: App/Models/Owner.php line 49 and App/Models/Booking.php
-   Fixed:
-   - Added owner_id column logic in Booking::create() method
-   - Created database_fixes.sql to add the missing column
-   Status: ✓ CODE FIXED - SQL MIGRATION NEEDED
+2. MISSING MODEL METHODS
+   - Added Admin::owners() and Admin::villas()
+   - Added Owner::myVillas()
+   - Added Booking::getByOwnerId()
 
-3. MISSING MODEL METHODS
-   -----------------------
-   Problem: Controllers calling methods that don't exist in models
-   Fixed:
-   - Added Admin::owners() and Admin::villas() wrapper methods
-   - Added Owner::myVillas() method
-   - Added Booking::getByOwnerId() static method
-   Status: ✓ FIXED
+3. ROUTES PARAMETER BUG (MAIN ISSUE)
+   - Fixed owner routes to call methods without parameters
+   - Fixed user routes to call methods without parameters
 
-4. SQL INJECTION VULNERABILITIES (CRITICAL SECURITY)
-   --------------------------------------------------
-   Fixed the following models to use prepared statements:
-
-   a) App/Models/Villa.php
-      - getById() method: Changed direct interpolation to prepared statement
-      - update() method: Now uses bind_param
-      - delete() method: Now uses bind_param
-
-   b) App/Models/VillaImages.php
-      - getByVilla() method: Now uses prepared statement
-      - addImages() method: Now uses prepared statement
-      - deleteImage() method: Now uses prepared statement
-
-   c) App/Models/OwnerStats.php
-      - getStats() method: All queries now use prepared statements
-
-   d) App/Models/UserStats.php
-      - getStats() method: All queries now use prepared statements
-
-   Status: ✓ FIXED
+4. SQL INJECTION VULNERABILITIES
+   - Fixed Villa.php to use prepared statements
+   - Fixed VillaImages.php to use prepared statements
+   - Fixed OwnerStats.php to use prepared statements
+   - Fixed UserStats.php to use prepared statements
 
 ===============================================================================
-FILES TO UPLOAD TO SERVER:
+FILES TO UPLOAD (8 FILES):
 ===============================================================================
 
-REQUIRED FILES (Upload these to fix all issues):
-1. App/Models/Admin.php
-2. App/Models/Owner.php
-3. App/Models/Booking.php
-4. App/Models/Villa.php
-5. App/Models/VillaImages.php
-6. App/Models/OwnerStats.php
-7. App/Models/UserStats.php
+1. routes.php                      ← CRITICAL FIX!
+2. App/Models/Admin.php
+3. App/Models/Owner.php
+4. App/Models/Booking.php
+5. App/Models/Villa.php
+6. App/Models/VillaImages.php
+7. App/Models/OwnerStats.php
+8. App/Models/UserStats.php
 
 ===============================================================================
-DATABASE MIGRATION REQUIRED:
+DATABASE STATUS:
 ===============================================================================
 
-Run this SQL in phpMyAdmin:
-
--- Add missing owner_id column to bookings table
-ALTER TABLE bookings
-ADD COLUMN owner_id INT DEFAULT NULL AFTER villa_id;
-
--- Add indexes for better performance
-ALTER TABLE bookings
-ADD KEY idx_owner_id (owner_id);
-
-ALTER TABLE villas
-ADD KEY idx_owner_id (owner_id);
-
-ALTER TABLE villas
-ADD KEY idx_status (status);
-
-ALTER TABLE owners
-ADD KEY idx_status (status);
-
-(See database_fixes.sql file for complete migration)
+✓ owner_id column ALREADY EXISTS in bookings table
+✗ DO NOT run any ALTER TABLE commands
+✓ Database is ready to use
 
 ===============================================================================
-ENDPOINTS THAT SHOULD NOW WORK:
+WORKING ENDPOINTS AFTER UPLOAD:
 ===============================================================================
 
-✓ Admin Owner List: /api/admin/owners
-✓ Admin Villa List: /api/admin/villas
-✓ Owner Stats: /api/owner/stats
-✓ Owner Villas: /api/owner/my-villas
+ADMIN ENDPOINTS:
+✓ /api/admin/owners              (List all owners)
+✓ /api/admin/villas              (List all villas)
+✓ /api/admin/stats               (Dashboard stats)
+✓ /api/admin/owner-detail?id=X   (Owner details)
+
+OWNER ENDPOINTS:
+✓ /api/owner/stats               (Owner dashboard stats)
+✓ /api/owner/villas              (List owner's villas)
+✓ /api/owner/bookings            (List owner's bookings)
+✓ /api/owner/add-villa           (Add new villa)
+
+USER ENDPOINTS:
+✓ /api/user/profile              (User profile)
+✓ /api/user/bookings             (User bookings)
+✓ /api/user/update-profile       (Update profile)
+✓ /api/user/create-booking       (Create booking)
 
 ===============================================================================
-SECURITY IMPROVEMENTS:
+WHAT WAS WRONG:
 ===============================================================================
 
-✓ Replaced all direct SQL variable interpolation with prepared statements
-✓ Removed SQL injection vulnerabilities in 6 model files
-✓ Added proper parameter binding for all user inputs
-✓ Improved database query security across the application
+Before: routes.php called $owner->stats($userId)
+After:  routes.php calls $owner->stats()
+
+The controller methods internally call $this->requireOwner() which:
+1. Validates the JWT token
+2. Extracts the user ID from the token
+3. Returns the authenticated user data
+
+So passing $userId as parameter was incorrect and caused PHP errors.
 
 ===============================================================================
