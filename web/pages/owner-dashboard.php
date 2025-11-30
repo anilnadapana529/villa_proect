@@ -1,5 +1,5 @@
-<?php 
-include "../helpers/api.php";
+<?php
+include __DIR__ . "/../helpers/api.php";
 
 if (!API::isLoggedIn() || API::getUserRole() !== 'owner') {
     header("Location: login.php");
@@ -13,7 +13,7 @@ $stats = API::get("owner-stats", [], $token);
 $villas = API::get("owner-villas", [], $token);
 $bookings = API::get("owner-bookings", [], $token);
 
-include "../includes/header.php";
+include __DIR__ . "/../includes/header.php";
 ?>
 
 <style>
@@ -483,4 +483,4 @@ function deleteVilla(id) {
 }
 </script>
 
-<?php include "../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

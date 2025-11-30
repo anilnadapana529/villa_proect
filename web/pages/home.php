@@ -1,6 +1,6 @@
-<?php 
-include "../helpers/api.php"; 
-include "../includes/header.php";
+<?php
+include __DIR__ . "/../helpers/api.php";
+include __DIR__ . "/../includes/header.php";
 
 $data = API::get("home-data");
 $sliders = $data["sliders"] ?? [];
@@ -460,4 +460,4 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
 });
 </script>
 
-<?php include "../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

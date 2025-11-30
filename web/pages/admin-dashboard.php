@@ -1,5 +1,5 @@
-<?php 
-include "../helpers/api.php";
+<?php
+include __DIR__ . "/../helpers/api.php";
 
 if (!API::isLoggedIn() || API::getUserRole() !== 'admin') {
     header("Location: login.php");
@@ -13,7 +13,7 @@ $stats = API::get("admin-stats", [], $token);
 $owners = API::get("admin-owners", [], $token);
 $villas = API::get("admin-villas", [], $token);
 
-include "../includes/header.php";
+include __DIR__ . "/../includes/header.php";
 ?>
 
 <style>
@@ -185,4 +185,4 @@ function approveVilla(id) { if (confirm('Approve villa?')) alert('Approved!'); }
 function rejectVilla(id) { if (confirm('Reject villa?')) alert('Rejected!'); }
 </script>
 
-<?php include "../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

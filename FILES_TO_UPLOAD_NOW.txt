@@ -1,24 +1,72 @@
 ═══════════════════════════════════════════════════════════════
-                    UPLOAD THESE 8 FILES
+           UPLOAD THESE 6 FILES TO FIX PATH ISSUES
 ═══════════════════════════════════════════════════════════════
 
-1. .htaccess                    → /public_html/.htaccess
-2. web/.htaccess                → /public_html/web/.htaccess
-3. web/router.php               → /public_html/web/router.php
-4. web/pages/login.php          → /public_html/web/pages/login.php
-5. web/pages/register.php       → /public_html/web/pages/register.php
-6. web/pages/logout.php         → /public_html/web/pages/logout.php
-7. web/pages/home.php           → /public_html/web/pages/home.php
-8. web/includes/navbar.php      → /public_html/web/includes/navbar.php
+THE PROBLEM:
+────────────
+When routes.php includes the web pages, the relative paths like
+"../helpers/api.php" break because the working directory changes.
+
+THE FIX:
+────────
+Changed all relative paths to absolute paths using __DIR__
 
 ═══════════════════════════════════════════════════════════════
 
-THEN TEST THESE URLS:
-─────────────────────
+UPLOAD THESE FILES:
+───────────────────
 
-✓ topmost.in              (Homepage with animations)
-✓ topmost.in/admin        (Admin login)
-✓ topmost.in/owner        (Owner login)
-✓ topmost.in/register     (Registration)
+1. web/pages/home.php              → /public_html/web/pages/home.php
+2. web/pages/login.php             → /public_html/web/pages/login.php
+3. web/pages/register.php          → /public_html/web/pages/register.php
+4. web/pages/logout.php            → /public_html/web/pages/logout.php
+5. web/pages/admin-dashboard.php   → /public_html/web/pages/admin-dashboard.php
+6. web/pages/owner-dashboard.php   → /public_html/web/pages/owner-dashboard.php
+
+═══════════════════════════════════════════════════════════════
+
+WHAT WAS CHANGED:
+─────────────────
+
+OLD (BROKEN):
+  include "../helpers/api.php";
+  include "../includes/header.php";
+  include "../includes/footer.php";
+
+NEW (FIXED):
+  include __DIR__ . "/../helpers/api.php";
+  include __DIR__ . "/../includes/header.php";
+  include __DIR__ . "/../includes/footer.php";
+
+═══════════════════════════════════════════════════════════════
+
+AFTER UPLOADING:
+────────────────
+
+Test these URLs:
+
+1. https://topmost.in
+   → Should show animated homepage (no errors)
+
+2. https://topmost.in/admin
+   → Should show admin login page
+
+3. https://topmost.in/owner
+   → Should show owner login page
+
+4. https://topmost.in/register
+   → Should show registration page
+
+ALL pages should work without "Failed to open stream" errors!
+
+═══════════════════════════════════════════════════════════════
+
+REMINDER:
+─────────
+You already uploaded:
+  ✓ .htaccess
+  ✓ routes.php
+
+Now upload these 6 web page files and everything will work!
 
 ═══════════════════════════════════════════════════════════════

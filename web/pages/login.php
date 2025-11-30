@@ -1,5 +1,5 @@
 <?php
-include "../helpers/api.php";
+include __DIR__ . "/../helpers/api.php";
 
 if (API::isLoggedIn()) {
     $role = API::getUserRole();
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include "../includes/header.php";
+include __DIR__ . "/../includes/header.php";
 ?>
 
 <style>
@@ -219,4 +219,4 @@ include "../includes/header.php";
     </div>
 </div>
 
-<?php include "../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
