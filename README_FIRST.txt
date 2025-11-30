@@ -1,97 +1,126 @@
 ═══════════════════════════════════════════════════════════════
-              READ THIS FIRST - IMPORTANT!
+           OWNER LOGIN TROUBLESHOOTING GUIDE
 ═══════════════════════════════════════════════════════════════
 
-YOU'RE STILL GETTING: "Unexpected token '<'" ERROR
+PROBLEM: Getting "Unexpected token '<'" error when testing 
+         owner-login endpoint
 
-This means PHP is outputting HTML instead of JSON.
-
-═══════════════════════════════════════════════════════════════
-              MOST LIKELY CAUSES:
-═══════════════════════════════════════════════════════════════
-
-1. Files uploaded to WRONG FOLDER
-   → Check: Is routes.php in the project ROOT (not /public)?
-   → Check: Are App/Models/*.php files in App/Models/ folder?
-
-2. Files NOT uploaded at all
-   → Some FTP/upload issues don't show errors
-   → Verify: Visit test URLs below
-
-3. PHP CACHE not cleared
-   → Old files still in memory
-   → Fix: Restart PHP-FPM or clear opcache
-
-4. Wrong URL being accessed
-   → Correct: /api/owner-stats
-   → Wrong: /api/owner/stats (extra slash)
+CAUSE: PHP is outputting HTML error before JSON, causing
+       JSON parsing to fail
 
 ═══════════════════════════════════════════════════════════════
-              QUICK DIAGNOSIS (Do This Now!)
-═══════════════════════════════════════════════════════════════
 
-Step 1: Open your browser and visit:
-        https://topmost.in/public/test.php
+SOLUTION: Upload diagnostic files to find the exact error
+──────────────────────────────────────────────────────────────
 
-Step 2: Visit:
-        https://topmost.in/public/test-routes.php
+STEP 1: Upload These 3 Files
+────────────────────────────
 
-Step 3: Share the output of BOTH URLs
+From this project folder, upload to your server:
 
-═══════════════════════════════════════════════════════════════
-              EXPECTED RESULTS:
-═══════════════════════════════════════════════════════════════
+1. public/debug-owner.php       → Tests database & model
+2. public/test-owner-login.php  → Tests login directly  
+3. public/api-test.html         → API testing tool (updated)
 
-test.php should show:
-{
-  "success": true,
-  "test9_controller_methods": {
-    "stats": [],
-    "myVillas": [],
-    "bookings": []
-  }
-}
-
-test-routes.php should show:
-{
-  "status": "FIXED"
-}
+Upload Location:
+  /public_html/public/   (or wherever your public folder is)
 
 ═══════════════════════════════════════════════════════════════
-              IF YOU SEE DIFFERENT OUTPUT:
+
+STEP 2: Run Diagnostics
+────────────────────────
+
+Visit these URLs in your browser:
+
+1. https://topmost.in/public/debug-owner.php
+   
+   This checks:
+   ✓ Database connection
+   ✓ Owners table structure
+   ✓ Owner model loads correctly
+   ✓ Required columns exist
+   
+   Look for: "status": "ALL_CHECKS_PASSED"
+   
+   If you see errors, that's your problem!
+
+2. https://topmost.in/public/test-owner-login.php?email=YOUR_EMAIL&password=YOUR_PASSWORD
+   
+   Replace YOUR_EMAIL and YOUR_PASSWORD with real credentials
+   
+   This tests login without going through routing
+   
+   If this WORKS: Problem is in routes.php or autoloader
+   If this FAILS: Problem is in Owner model or database
+
 ═══════════════════════════════════════════════════════════════
 
-→ Share the exact output you see
-→ I can then tell you exactly what's wrong
+MOST LIKELY ISSUES:
+───────────────────
+
+1. NO OWNERS IN DATABASE
+   → Create one using phpMyAdmin (see below)
+
+2. MISSING owner_id COLUMN
+   → Run SQL fixes (see below)
+
+3. PHP SYNTAX ERROR
+   → Check "captured_output" field in test results
+   → Will show the exact error
+
+4. WRONG CREDENTIALS
+   → Make sure you're using correct email/password
 
 ═══════════════════════════════════════════════════════════════
-              FILES TO UPLOAD (if not done yet):
+
+QUICK FIXES:
+────────────
+
+Fix #1: Create a Test Owner
+────────────────────────────
+
+Run this in phpMyAdmin:
+
+INSERT INTO owners (name, email, password, phone, created_at)
+VALUES (
+  'Test Owner',
+  'owner@example.com',
+  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  '1234567890',
+  NOW()
+);
+
+Login credentials:
+  Email: owner@example.com
+  Password: password
+
+
+Fix #2: Add owner_id Columns
+─────────────────────────────
+
+Run this in phpMyAdmin:
+
+ALTER TABLE villas 
+ADD COLUMN IF NOT EXISTS owner_id INT DEFAULT NULL,
+ADD INDEX idx_owner_id (owner_id);
+
+ALTER TABLE bookings
+ADD COLUMN IF NOT EXISTS owner_id INT DEFAULT NULL,
+ADD INDEX idx_owner_id_bookings (owner_id);
+
+UPDATE bookings b
+JOIN villas v ON b.villa_id = v.id
+SET b.owner_id = v.owner_id
+WHERE b.owner_id IS NULL;
+
 ═══════════════════════════════════════════════════════════════
 
-1. routes.php                  (project root)
-2. App/Models/Admin.php        (App/Models/ folder)
-3. App/Models/Owner.php        (App/Models/ folder)
-4. App/Models/Booking.php      (App/Models/ folder)
-5. App/Models/Villa.php        (App/Models/ folder)
-6. App/Models/VillaImages.php  (App/Models/ folder)
-7. App/Models/OwnerStats.php   (App/Models/ folder)
-8. App/Models/UserStats.php    (App/Models/ folder)
+AFTER RUNNING DIAGNOSTICS:
+──────────────────────────
 
-═══════════════════════════════════════════════════════════════
-              FOLDER STRUCTURE SHOULD BE:
-═══════════════════════════════════════════════════════════════
+Send me the output from:
+  https://topmost.in/public/debug-owner.php
 
-/public_html/ (or /villa-booking/)
-├── routes.php ← MUST BE HERE
-├── App/
-│   ├── Controllers/
-│   └── Models/
-│       ├── Owner.php ← MUST BE HERE
-│       ├── Admin.php
-│       └── (other models)
-└── public/
-    ├── index.php
-    ├── test.php
-    └── test-routes.php
+And I'll tell you exactly what to fix!
 
 ═══════════════════════════════════════════════════════════════
