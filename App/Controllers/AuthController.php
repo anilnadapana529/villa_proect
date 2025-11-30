@@ -13,7 +13,7 @@ class AuthController
     /** ------------------------------
      *  ADMIN LOGIN
      *  ------------------------------ */
-    public function adminLogin()
+    public function admin_login()
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
@@ -30,7 +30,7 @@ class AuthController
         }
 
         $token = JWT::encode([
-            "id"   => $admin["id"],
+            "user_id" => $admin["id"],
             "role" => "admin",
             "email" => $admin["email"]
         ]);
@@ -46,7 +46,7 @@ class AuthController
     /** ------------------------------
      *  OWNER LOGIN
      *  ------------------------------ */
-    public function ownerLogin()
+    public function owner_login()
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
@@ -63,7 +63,7 @@ class AuthController
         }
 
         $token = JWT::encode([
-            "id"   => $owner["id"],
+            "user_id" => $owner["id"],
             "role" => "owner",
             "email" => $owner["email"]
         ]);
@@ -79,7 +79,7 @@ class AuthController
     /** ------------------------------
      *  USER LOGIN
      *  ------------------------------ */
-    public function userLogin()
+    public function user_login()
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
@@ -96,7 +96,7 @@ class AuthController
         }
 
         $token = JWT::encode([
-            "id"   => $user["id"],
+            "user_id" => $user["id"],
             "role" => "user",
             "email" => $user["email"]
         ]);
