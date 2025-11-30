@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 class JWT {
 
     private static $secret = "SUPER_SECRET_KEY_CHANGE_THIS_123";
