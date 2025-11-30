@@ -1,0 +1,240 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/user.dart';
+import '../models/villa.dart';
+import '../models/booking.dart';
+
+class ApiService {
+  static const String baseUrl = 'https://topmost.in/api';
+
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  static Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+  }
+
+  static Future<void> removeToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('role');
+    await prefs.remove('user');
+  }
+
+  static Future<String?> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('role');
+  }
+
+  static Future<void> saveRole(String role) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('role', role);
+  }
+
+  static Future<Map<String, String>> getHeaders({bool includeAuth = false}) async {
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (includeAuth) {
+      final token = await getToken();
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+    }
+
+    return headers;
+  }
+
+  static Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+    required String role,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/$role-login'),
+        headers: await getHeaders(),
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        await saveToken(data['token']);
+        await saveRole(role);
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Login failed'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> register({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/user-register'),
+        headers: await getHeaders(),
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'password': password,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        await saveToken(data['token']);
+        await saveRole('user');
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Registration failed'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<List<Villa>> getVillas() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/villas'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['villas'] != null) {
+          return (data['villas'] as List)
+              .map((json) => Villa.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<Villa?> getVillaById(int id) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/villas/$id'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['villa'] != null) {
+          return Villa.fromJson(data['villa']);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<List<Booking>> getUserBookings() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/user/bookings'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['bookings'] != null) {
+          return (data['bookings'] as List)
+              .map((json) => Booking.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>> createBooking({
+    required int villaId,
+    required DateTime checkIn,
+    required DateTime checkOut,
+    required int guests,
+    required double totalPrice,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/bookings'),
+        headers: await getHeaders(includeAuth: true),
+        body: jsonEncode({
+          'villa_id': villaId,
+          'check_in': checkIn.toIso8601String(),
+          'check_out': checkOut.toIso8601String(),
+          'guests': guests,
+          'total_price': totalPrice.toString(),
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Booking failed'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<List<Villa>> searchVillas({
+    String? location,
+    int? guests,
+    DateTime? checkIn,
+    DateTime? checkOut,
+  }) async {
+    try {
+      final queryParams = <String, String>{};
+      if (location != null && location.isNotEmpty) queryParams['location'] = location;
+      if (guests != null) queryParams['guests'] = guests.toString();
+      if (checkIn != null) queryParams['check_in'] = checkIn.toIso8601String();
+      if (checkOut != null) queryParams['check_out'] = checkOut.toIso8601String();
+
+      final uri = Uri.parse('$baseUrl/search').replace(queryParameters: queryParams);
+      final response = await http.get(
+        uri,
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['villas'] != null) {
+          return (data['villas'] as List)
+              .map((json) => Villa.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+}
