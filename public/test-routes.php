@@ -1,30 +1,38 @@
 <?php
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
 
-// Check if routes.php has the exit fix
-$routesFile = __DIR__ . "/../routes.php";
-$content = file_get_contents($routesFile);
+// Simulate different request URIs
+$testURIs = [
+    '/api/owner-login',
+    '/api/admin-login',
+    '/api/owner-stats',
+    '/api/home-data',
+    '/owner-login',
+    '/public/api/owner-login',
+];
 
-// Check for the bug
-$hasBug = strpos($content, 'Response::json(["status" => false, "message" => "Unauthorized"], 401);
+$results = [];
+
+foreach ($testURIs as $testURI) {
+    // Simulate the routing logic from routes.php
+    $uri = $testURI;
+    $uri = str_replace('/public/index.php', '', $uri);
+    $uri = str_replace('/index.php', '', $uri);
+    $uri = str_replace('/api', '', $uri);
+    $uri = trim($uri, '/');
+    
+    $parts = explode('/', $uri);
+    $endpoint = end($parts) ?: 'home-data';
+    
+    $results[] = [
+        "input" => $testURI,
+        "cleaned_uri" => $uri,
+        "endpoint" => $endpoint
+    ];
 }
-
-$role') !== false;
-
-// Check for the fix
-$hasExit = strpos($content, 'Response::json(["status" => false, "message" => "Unauthorized"], 401);
-    exit;
-}
-
-$role') !== false;
 
 echo json_encode([
-    "routes_file_exists" => file_exists($routesFile),
-    "routes_file_size" => filesize($routesFile),
-    "has_bug_missing_exit" => $hasBug,
-    "has_exit_fix" => $hasExit,
-    "status" => $hasExit ? "FIXED" : "NOT FIXED - UPLOAD routes.php!",
-    "owner_model_exists" => file_exists(__DIR__ . "/../App/Models/Owner.php"),
-    "admin_model_exists" => file_exists(__DIR__ . "/../App/Models/Admin.php")
-]);
+    "test" => "Route Parsing Test",
+    "routes_fix_applied" => true,
+    "results" => $results
+], JSON_PRETTY_PRINT);

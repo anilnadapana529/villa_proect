@@ -11,6 +11,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 // Remove common path components
 $uri = str_replace('/public/index.php', '', $uri);
 $uri = str_replace('/index.php', '', $uri);
+$uri = str_replace('/api', '', $uri);
 $uri = trim($uri, '/');
 
 // Get endpoint (last part of the path)

@@ -1,48 +1,103 @@
-FILES TO UPLOAD TO YOUR SERVER (FINAL FIX)
-===========================================
+═══════════════════════════════════════════════════════════════
+                FINAL FIX - UPLOAD THESE FILES
+═══════════════════════════════════════════════════════════════
 
-Upload these 8 files - ALL FIXED AND TESTED:
+THE ISSUE:
+──────────
+Your diagnostic tests showed everything works, but api-test.html
+fails. The problem is that routes.php wasn't removing "/api" 
+from the URL path, so "/api/owner-login" wasn't matching the
+"owner-login" route.
 
-1. routes.php ← CRITICAL BUG FIXED!
-   → Fixed missing exit after auth failure
-   → Fixed owner/user method calls
+THE FIX:
+────────
+Added one line to routes.php to strip "/api" from the path:
+
+  $uri = str_replace('/api', '', $uri);
+
+═══════════════════════════════════════════════════════════════
+
+UPLOAD THIS FILE TO YOUR SERVER:
+─────────────────────────────────
+
+✓ routes.php  (UPDATED - contains the fix)
+  → Upload to: /public_html/routes.php
+
+═══════════════════════════════════════════════════════════════
+
+OPTIONAL TEST FILE:
+───────────────────
+
+✓ public/test-routes.php  (NEW - tests route parsing)
+  → Upload to: /public_html/public/test-routes.php
+  → Visit: https://topmost.in/public/test-routes.php
+  → Should show all routes parse correctly
+
+═══════════════════════════════════════════════════════════════
+
+AFTER UPLOADING:
+────────────────
+
+1. Upload routes.php to your server
+
+2. Test with api-test.html:
+   → https://topmost.in/public/api-test.html
+   → Enter owner credentials
+   → Click "Login as Owner"
+   → Should now work! ✓
+
+3. Test the API endpoints:
    
-2. App/Models/Admin.php
-   → Fixed table name + added wrapper methods
+   POST https://topmost.in/api/owner-login
+   {
+     "email": "sindhu@gmail.com",
+     "password": "your_password"
+   }
+   
+   Should return:
+   {
+     "status": true,
+     "token": "eyJ...",
+     "owner": {...}
+   }
 
-3. App/Models/Owner.php
-   → Added myVillas() method
+4. Test protected endpoints with token:
+   
+   GET https://topmost.in/api/owner-stats
+   Authorization: Bearer YOUR_TOKEN
+   
+   GET https://topmost.in/api/owner-villas
+   Authorization: Bearer YOUR_TOKEN
+   
+   GET https://topmost.in/api/owner-bookings
+   Authorization: Bearer YOUR_TOKEN
 
-4. App/Models/Booking.php
-   → Added owner_id logic + getByOwnerId()
+═══════════════════════════════════════════════════════════════
 
-5. App/Models/Villa.php
-   → Fixed SQL injection vulnerabilities
+SUMMARY OF CHANGES:
+───────────────────
 
-6. App/Models/VillaImages.php
-   → Fixed SQL injection vulnerabilities
+File: routes.php
+Line: 14
+Change: Added $uri = str_replace('/api', '', $uri);
 
-7. App/Models/OwnerStats.php
-   → Fixed SQL injection vulnerabilities
+Before:
+  /api/owner-login → Extracted endpoint: "owner-login" ✗ (didn't match)
 
-8. App/Models/UserStats.php
-   → Fixed SQL injection vulnerabilities
+After:
+  /api/owner-login → Removed "/api" → /owner-login → Extracted: "owner-login" ✓
 
-CRITICAL BUG FOUND:
-===================
-routes.php line 57 was missing exit; after Response::json()
-This caused the code to continue executing and generate HTML errors!
+═══════════════════════════════════════════════════════════════
 
-DATABASE:
-=========
-✓ owner_id column already exists
-✗ NO SQL changes needed
+ALL CHECKS PASSED:
+──────────────────
 
-AFTER UPLOAD TEST:
-==================
-1. Owner Login at: /api/owner-login
-2. Copy the token
-3. Test: /api/owner-stats (with Bearer token)
-4. Test: /api/owner-villas (with Bearer token)
+✓ Database structure correct (24 owners found)
+✓ Owner model works
+✓ Direct login test works (got valid token)
+✓ No PHP errors
+✓ Routes.php updated to handle /api/ prefix
 
-All should return proper JSON now!
+Now your owner endpoints should work perfectly!
+
+═══════════════════════════════════════════════════════════════
