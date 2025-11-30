@@ -237,4 +237,200 @@ class ApiService {
       return [];
     }
   }
+
+  static Future<List<Villa>> getOwnerVillas() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/owner/villas'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['villas'] != null) {
+          return (data['villas'] as List)
+              .map((json) => Villa.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>> createVilla(Map<String, dynamic> villaData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/villas'),
+        headers: await getHeaders(includeAuth: true),
+        body: jsonEncode(villaData),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Failed to create villa'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateVilla(int id, Map<String, dynamic> villaData) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/villas/$id'),
+        headers: await getHeaders(includeAuth: true),
+        body: jsonEncode(villaData),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Failed to update villa'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> deleteVilla(int id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/villas/$id'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        return {'success': true};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Failed to delete villa'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> getOwnerDashboard() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/owner/dashboard'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': 'Failed to load dashboard'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<List<Villa>> getAdminVillas() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/admin/villas'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['villas'] != null) {
+          return (data['villas'] as List)
+              .map((json) => Villa.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<Villa>> getPendingVillas() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/admin/pending-villas'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['pending_villas'] != null) {
+          return (data['pending_villas'] as List)
+              .map((json) => Villa.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>> approveVilla(int id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/admin/villa/approve?id=$id'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        return {'success': true};
+      } else {
+        return {'success': false, 'message': 'Failed to approve villa'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> rejectVilla(int id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/admin/villa/reject?id=$id'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status'] == true) {
+        return {'success': true};
+      } else {
+        return {'success': false, 'message': 'Failed to reject villa'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> getAdminDashboard() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/admin/dashboard'),
+        headers: await getHeaders(includeAuth: true),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': 'Failed to load dashboard'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
 }

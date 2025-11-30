@@ -46,6 +46,10 @@ $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
 $router->get('/admin/users', [AdminController::class, 'users']);
 $router->get('/admin/owners', [AdminController::class, 'owners']);
 $router->get('/admin/bookings', [AdminController::class, 'bookings']);
+$router->get('/admin/villas', [AdminController::class, 'villas']);
+$router->get('/admin/pending-villas', [AdminController::class, 'pendingVillas']);
+$router->post('/admin/villa/approve', [AdminController::class, 'approveVilla']);
+$router->post('/admin/villa/reject', [AdminController::class, 'rejectVilla']);
 
 $router->post('/payments/create', [PaymentController::class, 'create']);
 $router->post('/payments/verify', [PaymentController::class, 'verify']);
