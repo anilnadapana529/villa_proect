@@ -1,4 +1,184 @@
-ntext),
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/villa_provider.dart';
+import '../../widgets/villa_card.dart';
+import '../../models/villa.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final PageController _bannerController = PageController();
+  int _currentBannerIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<VillaProvider>(context, listen: false).fetchVillas();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _bannerController.dispose();
+    super.dispose();
+  }
+
+  void _handleSearch() {
+    if (_searchController.text.trim().isNotEmpty) {
+      Navigator.pushNamed(
+        context,
+        '/villas',
+        arguments: {'search': _searchController.text.trim()},
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final villaProvider = Provider.of<VillaProvider>(context);
+
+    final popularVillas = villaProvider.villas
+        .where((v) => v.status == 'approved')
+        .take(10)
+        .toList();
+
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () => villaProvider.fetchVillas(),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 280,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF1E3A8A),
+                        Color(0xFF3B82F6),
+                        Color(0xFF60A5FA),
+                      ],
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome${authProvider.user != null ? ', ${authProvider.user!.name.split(' ')[0]}' : ''}!',
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Find your perfect luxury villa',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          TextField(
+                            controller: _searchController,
+                            onSubmitted: (_) => _handleSearch(),
+                            style: const TextStyle(color: Colors.black87),
+                            decoration: InputDecoration(
+                              hintText: 'Search for villas...',
+                              filled: true,
+                              fillColor: Colors.white,
+                              prefixIcon: const Icon(Icons.search, color: Color(0xFF1E3A8A)),
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.arrow_forward, color: Color(0xFF1E3A8A)),
+                                onPressed: _handleSearch,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                if (authProvider.isAuthenticated)
+                  IconButton(
+                    icon: const Icon(Icons.person),
+                    onPressed: () {
+                      final role = authProvider.role;
+                      if (role == 'admin') {
+                        Navigator.pushNamed(context, '/admin-dashboard');
+                      } else if (role == 'owner') {
+                        Navigator.pushNamed(context, '/owner-dashboard');
+                      } else {
+                        Navigator.pushNamed(context, '/user-dashboard');
+                      }
+                    },
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Login'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF1E3A8A),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                          ),
+                          child: const Text('Sign Up'),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32),
+                  _buildQuickActions(context),
                   const SizedBox(height: 32),
                   if (villaProvider.isLoading)
                     const Center(
@@ -54,129 +234,19 @@ ntext),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: popularVillas.length > 5 ? 5 : popularVillas.length,
+                          itemCount: popularVillas.length,
                           itemBuilder: (context, index) {
                             return VillaCard(villa: popularVillas[index]);
                           },
                         ),
                       ],
                     ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/villas');
-        },
-        backgroundColor: const Color(0xFF1E3A8A),
-        icon: const Icon(Icons.villa),
-        label: const Text('Explore Villas'),
-      ),
-    );
-  }
-
-  Widget _buildBannerSection() {
-    final banners = [
-      {
-        'title': 'Luxury Stays',
-        'subtitle': 'Premium villas with world-class amenities',
-        'icon': Icons.diamond,
-        'color': const Color(0xFF1E3A8A),
-      },
-      {
-        'title': 'Best Locations',
-        'subtitle': 'Villas in the most scenic destinations',
-        'icon': Icons.location_on,
-        'color': const Color(0xFF059669),
-      },
-      {
-        'title': 'Easy Booking',
-        'subtitle': 'Book your dream villa in minutes',
-        'icon': Icons.calendar_today,
-        'color': const Color(0xFFEA580C),
-      },
-    ];
-
-    return SizedBox(
-      height: 160,
-      child: PageView.builder(
-        controller: _bannerController,
-        itemCount: banners.length,
-        onPageChanged: (index) {
-          setState(() {
-            _currentBannerIndex = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          final banner = banners[index];
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  banner['color'] as Color,
-                  (banner['color'] as Color).withOpacity(0.7),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: (banner['color'] as Color).withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      banner['icon'] as IconData,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          banner['title'] as String,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          banner['subtitle'] as String,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.white70,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -258,27 +328,27 @@ ntext),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: Colors.grey.shade200, width: 1),
         ),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color,
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: Colors.white, size: 24),
+              child: Icon(icon, color: color, size: 28),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: color,
+                color: Colors.grey.shade800,
               ),
               textAlign: TextAlign.center,
             ),

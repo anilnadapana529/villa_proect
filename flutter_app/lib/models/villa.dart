@@ -1,4 +1,11 @@
 class Villa {
+  // Compatibility getters
+  String get name => title;
+  String get city => location;
+  String get state => location;
+  double get price => pricePerNight;
+  int get guests => maxGuests;
+
   final int id;
   final int ownerId;
   final String title;
