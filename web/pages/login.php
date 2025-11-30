@@ -66,7 +66,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             })
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
+        console.log('API Response:', result);
 
         if (result.status) {
             localStorage.setItem('token', result.token);

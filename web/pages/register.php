@@ -77,7 +77,12 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             })
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
+        console.log('API Response:', result);
 
         if (result.status) {
             localStorage.setItem('token', result.token);
