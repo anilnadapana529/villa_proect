@@ -1,0 +1,32 @@
+QUICK FIX REFERENCE
+===================
+
+ERROR: "Admin Owner List Not working"
+FIX: Added Admin::owners() method in Admin.php
+
+ERROR: "Admin Villa List Not working"  
+FIX: Added Admin::villas() method in Admin.php
+
+ERROR: "Owner stats Not working"
+FIX: Already works - OwnerStats::getStats() exists
+
+ERROR: "Owner Villas Not working"
+FIX: Added Owner::myVillas() method in Owner.php
+
+MISSING METHOD:
+FIX: Added Booking::getByOwnerId() in Booking.php for owner bookings
+
+DATABASE ISSUE:
+FIX: Need to run SQL migration to add owner_id column to bookings table
+
+UPLOAD THESE 7 FILES:
+1. App/Models/Admin.php
+2. App/Models/Owner.php  
+3. App/Models/Booking.php
+4. App/Models/Villa.php
+5. App/Models/VillaImages.php
+6. App/Models/OwnerStats.php
+7. App/Models/UserStats.php
+
+THEN RUN THIS SQL:
+ALTER TABLE bookings ADD COLUMN owner_id INT DEFAULT NULL AFTER villa_id;

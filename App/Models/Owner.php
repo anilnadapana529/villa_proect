@@ -55,6 +55,11 @@ class Owner
         return $this->fetchAll("SELECT * FROM villas WHERE owner_id=? ORDER BY id DESC", [$ownerId]);
     }
 
+    public function myVillas($ownerId)
+    {
+        return $this->villas($ownerId);
+    }
+
     public function bookings($ownerId)
     {
         return $this->fetchAll("

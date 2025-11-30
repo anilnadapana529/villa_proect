@@ -77,4 +77,20 @@ class Booking
 
         return $dates;
     }
+
+    public static function getByOwnerId($ownerId)
+    {
+        $pdo = Database::instance();
+
+        $stmt = $pdo->prepare("
+            SELECT b.*, v.name AS villa_name
+            FROM bookings b
+            LEFT JOIN villas v ON b.villa_id = v.id
+            WHERE b.owner_id = ?
+            ORDER BY b.id DESC
+        ");
+        $stmt->execute([$ownerId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

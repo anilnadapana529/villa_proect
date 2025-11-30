@@ -1,27 +1,32 @@
 FILES TO UPLOAD TO YOUR SERVER
 ===============================
 
-Upload these 6 files to fix all database and security issues:
+Upload these 9 files to fix all database and security issues:
 
 1. App/Models/Admin.php
    → Fixed table name from "admins" to "admin"
+   → Added owners() and villas() wrapper methods
 
-2. App/Models/Booking.php
+2. App/Models/Owner.php
+   → Added myVillas() method
+
+3. App/Models/Booking.php
    → Added owner_id logic when creating bookings
+   → Added getByOwnerId() method
 
-3. App/Models/Villa.php
+4. App/Models/Villa.php
    → Fixed SQL injection vulnerabilities
    → Now uses prepared statements
 
-4. App/Models/VillaImages.php
+5. App/Models/VillaImages.php
    → Fixed SQL injection vulnerabilities
    → Now uses prepared statements
 
-5. App/Models/OwnerStats.php
+6. App/Models/OwnerStats.php
    → Fixed SQL injection vulnerabilities
    → Now uses prepared statements
 
-6. App/Models/UserStats.php
+7. App/Models/UserStats.php
    → Fixed SQL injection vulnerabilities
    → Now uses prepared statements
 
@@ -35,5 +40,8 @@ ADD COLUMN owner_id INT DEFAULT NULL AFTER villa_id;
 
 (Full SQL is in database_fixes.sql)
 
-Then test admin login at:
-https://topmost.in/api-test.html
+Then test these endpoints:
+- Admin Owner List: https://topmost.in/api/admin/owners
+- Admin Villa List: https://topmost.in/api/admin/villas
+- Owner Stats: https://topmost.in/api/owner/stats
+- Owner Villas: https://topmost.in/api/owner/my-villas

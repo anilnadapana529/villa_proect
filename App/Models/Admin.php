@@ -57,14 +57,24 @@ class Admin
         return $this->fetchAll("SELECT id, name, email, phone, status FROM owners ORDER BY id DESC");
     }
 
+    public function owners()
+    {
+        return $this->allOwners();
+    }
+
     public function allVillas()
     {
         return $this->fetchAll("
             SELECT v.*, o.name AS owner_name
-            FROM villas v 
+            FROM villas v
             LEFT JOIN owners o ON v.owner_id = o.id
             ORDER BY v.id DESC
         ");
+    }
+
+    public function villas()
+    {
+        return $this->allVillas();
     }
 
     public function ownerDetail($id)

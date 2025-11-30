@@ -1,5 +1,5 @@
 ===============================================================================
-DATABASE & CODE FIXES SUMMARY
+DATABASE & CODE FIXES SUMMARY - UPDATED
 ===============================================================================
 
 CRITICAL FIXES APPLIED:
@@ -19,7 +19,16 @@ CRITICAL FIXES APPLIED:
    - Created database_fixes.sql to add the missing column
    Status: ✓ CODE FIXED - SQL MIGRATION NEEDED
 
-3. SQL INJECTION VULNERABILITIES (CRITICAL SECURITY)
+3. MISSING MODEL METHODS
+   -----------------------
+   Problem: Controllers calling methods that don't exist in models
+   Fixed:
+   - Added Admin::owners() and Admin::villas() wrapper methods
+   - Added Owner::myVillas() method
+   - Added Booking::getByOwnerId() static method
+   Status: ✓ FIXED
+
+4. SQL INJECTION VULNERABILITIES (CRITICAL SECURITY)
    --------------------------------------------------
    Fixed the following models to use prepared statements:
 
@@ -47,11 +56,12 @@ FILES TO UPLOAD TO SERVER:
 
 REQUIRED FILES (Upload these to fix all issues):
 1. App/Models/Admin.php
-2. App/Models/Booking.php
-3. App/Models/Villa.php
-4. App/Models/VillaImages.php
-5. App/Models/OwnerStats.php
-6. App/Models/UserStats.php
+2. App/Models/Owner.php
+3. App/Models/Booking.php
+4. App/Models/Villa.php
+5. App/Models/VillaImages.php
+6. App/Models/OwnerStats.php
+7. App/Models/UserStats.php
 
 ===============================================================================
 DATABASE MIGRATION REQUIRED:
@@ -79,6 +89,15 @@ ADD KEY idx_status (status);
 (See database_fixes.sql file for complete migration)
 
 ===============================================================================
+ENDPOINTS THAT SHOULD NOW WORK:
+===============================================================================
+
+✓ Admin Owner List: /api/admin/owners
+✓ Admin Villa List: /api/admin/villas
+✓ Owner Stats: /api/owner/stats
+✓ Owner Villas: /api/owner/my-villas
+
+===============================================================================
 SECURITY IMPROVEMENTS:
 ===============================================================================
 
@@ -86,27 +105,5 @@ SECURITY IMPROVEMENTS:
 ✓ Removed SQL injection vulnerabilities in 6 model files
 ✓ Added proper parameter binding for all user inputs
 ✓ Improved database query security across the application
-
-===============================================================================
-ADMIN LOGIN FIX:
-===============================================================================
-
-Admin login was failing because:
-- Table name mismatch (admins vs admin)
-- This has been corrected in Admin.php
-
-Test admin login with:
-Email: admin@villa.com
-Password: [Check your database for the hashed password]
-
-===============================================================================
-WHAT TO DO NEXT:
-===============================================================================
-
-1. Upload all 6 fixed model files to your server
-2. Run database_fixes.sql in phpMyAdmin
-3. Test admin login at https://topmost.in/api-test.html
-4. Test owner dashboard functionality
-5. Verify bookings work correctly with owner_id
 
 ===============================================================================
