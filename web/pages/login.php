@@ -4,21 +4,25 @@ include "../helpers/api.php";
 if (API::isLoggedIn()) {
     $role = API::getUserRole();
     if ($role === 'admin') {
-        header("Location: admin-dashboard.php");
+        header("Location: /admin-dashboard");
     } elseif ($role === 'owner') {
-        header("Location: owner-dashboard.php");
+        header("Location: /owner-dashboard");
     } else {
-        header("Location: user-dashboard.php");
+        header("Location: /dashboard");
     }
     exit;
 }
+
+// Get login type from URL parameter
+$type = $_GET['type'] ?? '';
+$defaultRole = in_array($type, ['admin', 'owner', 'user']) ? $type : 'user';
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
-    $role = $_POST['role'] ?? 'user';
+    $role = $_POST['role'] ?? $defaultRole;
     
     $endpoint = $role . '-login';
     $response = API::post($endpoint, ['email' => $email, 'password' => $password]);
@@ -29,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         API::setUser($response[$role] ?? $response['user'] ?? []);
         
         if ($role === 'admin') {
-            header("Location: admin-dashboard.php");
+            header("Location: /admin-dashboard");
         } elseif ($role === 'owner') {
-            header("Location: owner-dashboard.php");
+            header("Location: /owner-dashboard");
         } else {
-            header("Location: user-dashboard.php");
+            header("Location: /dashboard");
         }
         exit;
     } else {
@@ -45,6 +49,22 @@ include "../includes/header.php";
 ?>
 
 <style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .login-container {
     min-height: calc(100vh - 56px);
     display: flex;
@@ -52,6 +72,7 @@ include "../includes/header.php";
     justify-content: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 20px;
+    animation: fadeIn 0.5s ease;
 }
 
 .login-card {
@@ -61,6 +82,7 @@ include "../includes/header.php";
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     max-width: 450px;
     width: 100%;
+    animation: fadeInUp 0.6s ease;
 }
 
 .login-card h2 {
@@ -137,27 +159,46 @@ include "../includes/header.php";
     color: #667eea;
     font-weight: 600;
     text-decoration: none;
+    transition: color 0.3s;
+}
+
+.register-link a:hover {
+    color: #764ba2;
+}
+
+@media (max-width: 576px) {
+    .login-card {
+        padding: 30px 20px;
+    }
+
+    .login-card h2 {
+        font-size: 1.5rem;
+    }
 }
 </style>
 
 <div class="login-container">
     <div class="login-card">
         <h2>Welcome Back</h2>
-        <p>Sign in to your account</p>
+        <p>Sign in <?= $type ? 'as ' . ucfirst($type) : 'to your account' ?></p>
         
         <?php if ($error): ?>
             <div class="alert"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
         
         <form method="POST">
+            <?php if (!$type): ?>
             <div class="form-group">
                 <label>Login As</label>
                 <select name="role" required>
-                    <option value="user">User / Guest</option>
-                    <option value="owner">Villa Owner</option>
-                    <option value="admin">Admin</option>
+                    <option value="user" <?= $defaultRole === 'user' ? 'selected' : '' ?>>User / Guest</option>
+                    <option value="owner" <?= $defaultRole === 'owner' ? 'selected' : '' ?>>Villa Owner</option>
+                    <option value="admin" <?= $defaultRole === 'admin' ? 'selected' : '' ?>>Admin</option>
                 </select>
             </div>
+            <?php else: ?>
+            <input type="hidden" name="role" value="<?= htmlspecialchars($type) ?>">
+            <?php endif; ?>
             
             <div class="form-group">
                 <label>Email Address</label>
@@ -173,7 +214,7 @@ include "../includes/header.php";
         </form>
         
         <div class="register-link">
-            Don't have an account? <a href="register.php">Sign up</a>
+            Don't have an account? <a href="/register">Sign up</a>
         </div>
     </div>
 </div>

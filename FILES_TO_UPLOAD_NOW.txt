@@ -1,0 +1,24 @@
+═══════════════════════════════════════════════════════════════
+                    UPLOAD THESE 8 FILES
+═══════════════════════════════════════════════════════════════
+
+1. .htaccess                    → /public_html/.htaccess
+2. web/.htaccess                → /public_html/web/.htaccess
+3. web/router.php               → /public_html/web/router.php
+4. web/pages/login.php          → /public_html/web/pages/login.php
+5. web/pages/register.php       → /public_html/web/pages/register.php
+6. web/pages/logout.php         → /public_html/web/pages/logout.php
+7. web/pages/home.php           → /public_html/web/pages/home.php
+8. web/includes/navbar.php      → /public_html/web/includes/navbar.php
+
+═══════════════════════════════════════════════════════════════
+
+THEN TEST THESE URLS:
+─────────────────────
+
+✓ topmost.in              (Homepage with animations)
+✓ topmost.in/admin        (Admin login)
+✓ topmost.in/owner        (Owner login)
+✓ topmost.in/register     (Registration)
+
+═══════════════════════════════════════════════════════════════

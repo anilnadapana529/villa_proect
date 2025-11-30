@@ -1,10 +1,18 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Exclude web folder from rewrite
+    # Clean URL routes - Redirect to web router
+    RewriteCond %{REQUEST_URI} ^/(admin|owner|user|login|register|logout|villas|villa|booking|dashboard|admin-dashboard|owner-dashboard)/?$
+    RewriteRule ^(.*)$ web/router.php [L]
+
+    # Homepage redirect
+    RewriteCond %{REQUEST_URI} ^/?$
+    RewriteRule ^$ web/router.php [L]
+
+    # Exclude web folder from public redirect
     RewriteCond %{REQUEST_URI} !^/web/
 
-    # Redirect all requests to public directory
+    # Redirect all other requests to public directory (API)
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>

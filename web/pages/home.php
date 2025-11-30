@@ -8,23 +8,64 @@ $listings = $data["listings"] ?? [];
 ?>
 
 <style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .hero-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 80px 0;
+    padding: 100px 0;
     text-align: center;
+    animation: fadeIn 0.8s ease;
 }
 
 .hero-section h1 {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 20px;
+    animation: fadeInUp 1s ease 0.2s both;
 }
 
 .hero-section p {
     font-size: 1.3rem;
     margin-bottom: 30px;
     opacity: 0.95;
+    animation: fadeInUp 1s ease 0.4s both;
 }
 
 .search-box {
@@ -34,6 +75,7 @@ $listings = $data["listings"] ?? [];
     max-width: 600px;
     margin: 0 auto;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    animation: scaleIn 1s ease 0.6s both;
 }
 
 .search-box input {
@@ -72,6 +114,8 @@ $listings = $data["listings"] ?? [];
     transition: transform 0.3s, box-shadow 0.3s;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     margin-bottom: 30px;
+    animation: fadeInUp 0.6s ease both;
+    animation-delay: calc(var(--card-index) * 0.1s);
 }
 
 .villa-card:hover {
@@ -187,6 +231,8 @@ $listings = $data["listings"] ?? [];
 
 .stat-item {
     text-align: center;
+    animation: fadeInUp 0.8s ease both;
+    animation-delay: calc(var(--stat-index) * 0.15s);
 }
 
 .stat-item h3 {
@@ -200,13 +246,80 @@ $listings = $data["listings"] ?? [];
     opacity: 0.9;
 }
 
-@media (max-width: 768px) {
+.section-title {
+    animation: fadeInUp 0.8s ease;
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+
     .hero-section h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-section p {
+        font-size: 1.1rem;
+    }
+
+    .villa-card img {
+        height: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 50px 20px;
+    }
+
+    .hero-section h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .stat-item h3 {
         font-size: 2.5rem;
     }
-    
-    .section-title {
-        font-size: 2rem;
+
+    .stat-item p {
+        font-size: 1rem;
+    }
+
+    .villa-card img {
+        height: 200px;
+    }
+
+    .search-box {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .search-box button {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+
+    .stats-section {
+        padding: 40px 0;
+        margin: 50px 0;
+    }
+
+    .amenities {
+        flex-wrap: wrap;
     }
 }
 </style>
@@ -228,25 +341,25 @@ $listings = $data["listings"] ?? [];
     <div class="container">
         <div class="row">
             <div class="col-md-3 col-6">
-                <div class="stat-item">
+                <div class="stat-item" style="--stat-index: 0;">
                     <h3>500+</h3>
                     <p>Premium Villas</p>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="stat-item">
+                <div class="stat-item" style="--stat-index: 1;">
                     <h3>50+</h3>
                     <p>Locations</p>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="stat-item">
+                <div class="stat-item" style="--stat-index: 2;">
                     <h3>10k+</h3>
                     <p>Happy Guests</p>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="stat-item">
+                <div class="stat-item" style="--stat-index: 3;">
                     <h3>4.9★</h3>
                     <p>Average Rating</p>
                 </div>
@@ -264,9 +377,9 @@ $listings = $data["listings"] ?? [];
                 <p class="text-muted">No villas available at the moment.</p>
             </div>
         <?php else: ?>
-            <?php foreach($listings as $villa): ?>
+            <?php foreach($listings as $index => $villa): ?>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card villa-card position-relative">
+                    <div class="card villa-card position-relative" style="--card-index: <?= $index ?>">
                         <?php if (!empty($villa["featured"])): ?>
                             <span class="badge-featured">Featured</span>
                         <?php endif; ?>
