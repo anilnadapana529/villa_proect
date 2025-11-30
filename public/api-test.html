@@ -162,6 +162,7 @@
                         <option value="admin-villas">Admin Villas List</option>
                         <option value="owner-stats">Owner Stats</option>
                         <option value="owner-villas">Owner Villas</option>
+                        <option value="owner-bookings">Owner Bookings</option>
                     </select>
                 </div>
                 <button onclick="testProtectedAPI()">Test Protected Endpoint</button>
@@ -180,7 +181,7 @@
             responseDiv.innerHTML = 'Loading...';
 
             try {
-                const response = await fetch(`${baseURL}/home-data`);
+                const response = await fetch(`${baseURL}/api/home-data`);
                 const data = await response.json();
 
                 responseDiv.innerHTML = `<span class="success">✓ Success (${response.status})</span>\n\n${JSON.stringify(data, null, 2)}`;
@@ -198,7 +199,7 @@
             responseDiv.innerHTML = 'Loading...';
 
             try {
-                const response = await fetch(`${baseURL}/admin-login`, {
+                const response = await fetch(`${baseURL}/api/admin-login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -227,7 +228,7 @@
             responseDiv.innerHTML = 'Loading...';
 
             try {
-                const response = await fetch(`${baseURL}/owner-login`, {
+                const response = await fetch(`${baseURL}/api/owner-login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -262,7 +263,7 @@
             responseDiv.innerHTML = 'Loading...';
 
             try {
-                const response = await fetch(`${baseURL}/${endpoint}`, {
+                const response = await fetch(`${baseURL}/api/${endpoint}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
