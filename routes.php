@@ -78,6 +78,7 @@ switch ($endpoint) {
     case "admin-login":
     case "owner-login":
     case "user-login":
+    case "user-register":
         controller("AuthController");
         $methodName = str_replace('-', '_', $endpoint);
         (new App\Controllers\AuthController())->$methodName();
@@ -159,6 +160,7 @@ $booking = new App\Controllers\BookingController();
 
 if ($endpoint === "villa-detail") $villa->detail();
 if ($endpoint === "villa-list") $villa->list();
+if ($endpoint === "villas") $villa->list();
 if ($endpoint === "villa-calendar") $booking->calendar();
 if ($endpoint === "check-availability") $booking->check();
 

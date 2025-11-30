@@ -107,5 +107,69 @@ class AuthController
             "user"   => $user
         ]);
     }
+
+
+    /** ------------------------------
+     *  USER REGISTRATION
+     *  ------------------------------ */
+    public function user_register()
+    {
+        $body = json_decode(file_get_contents("php://input"), true);
+
+        $name = $body["name"] ?? "";
+        $email = $body["email"] ?? "";
+        $phone = $body["phone"] ?? "";
+        $password = $body["password"] ?? "";
+
+        if (!$name || !$email || !$password) {
+            return Response::json([
+                "status"  => false,
+                "message" => "All fields are required"
+            ], 400);
+        }
+
+        $db = \App\Core\Database::connect();
+        $email = $db->real_escape_string($email);
+        $name = $db->real_escape_string($name);
+        $phone = $db->real_escape_string($phone);
+
+        $checkEmail = $db->query("SELECT id FROM users WHERE email='$email'");
+        if ($checkEmail->num_rows > 0) {
+            return Response::json([
+                "status"  => false,
+                "message" => "Email already registered"
+            ], 400);
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $query = "INSERT INTO users (name, email, phone, password, created_at) VALUES ('$name', '$email', '$phone', '$hashedPassword', NOW())";
+
+        if ($db->query($query)) {
+            $userId = $db->insert_id;
+
+            $token = JWT::encode([
+                "user_id" => $userId,
+                "role" => "user",
+                "email" => $email
+            ]);
+
+            return Response::json([
+                "status" => true,
+                "token"  => $token,
+                "user"   => [
+                    "id" => $userId,
+                    "name" => $name,
+                    "email" => $email,
+                    "phone" => $phone
+                ]
+            ]);
+        } else {
+            return Response::json([
+                "status"  => false,
+                "message" => "Registration failed"
+            ], 500);
+        }
+    }
 }
 

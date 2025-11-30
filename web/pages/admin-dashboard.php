@@ -16,8 +16,19 @@ $users = API::get("admin-users", [], $token);
 $bookings = API::get("admin-bookings", [], $token);
 $payments = API::get("admin-payments", [], $token);
 
-include __DIR__ . "/../includes/header.php";
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TopMost</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: 'Poppins', sans-serif; font-size: 14px; margin: 0; padding: 0;">
 
 <style>
 .dashboard { min-height: 100vh; background: #f7fafc; }
@@ -420,4 +431,6 @@ function rejectVilla(id) {
 }
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
