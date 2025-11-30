@@ -1,0 +1,72 @@
+╔══════════════════════════════════════════════════════════════╗
+║                  FILES TO UPLOAD - FINAL LIST                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+⚠️  YOU ARE STILL GETTING ERRORS BECAUSE THESE FILES ARE NOT
+    UPLOADED TO YOUR SERVER YET!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FILE 1 (CRITICAL - UPLOAD FIRST!)
+────────────────────────────────────
+routes.php
+→ Location: /public_html/routes.php (project root)
+→ Why: Fixes missing exit; that causes HTML errors
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FILES 2-8 (MODEL FILES)
+──────────────────────────
+App/Models/Admin.php
+App/Models/Owner.php
+App/Models/Booking.php
+App/Models/Villa.php
+App/Models/VillaImages.php
+App/Models/OwnerStats.php
+App/Models/UserStats.php
+
+→ Location: /public_html/App/Models/ folder
+→ Why: Fixed methods + SQL injection fixes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 HOW TO VERIFY FILES ARE UPLOADED
+────────────────────────────────────
+1. Visit: https://topmost.in/test-routes.php
+2. Should see: "status": "FIXED"
+
+If you see "NOT FIXED" → routes.php is NOT uploaded yet!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 HOW TO UPLOAD (cPanel)
+─────────────────────────
+1. Login to cPanel
+2. Click "File Manager"
+3. Go to your project folder
+4. Click "Upload" button
+5. Select routes.php
+6. Overwrite when asked
+7. Go to App/Models/ folder
+8. Upload all 7 .php files
+9. Overwrite when asked
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ AFTER UPLOADING
+──────────────────
+Test owner endpoints:
+1. Login: /api/owner-login
+2. Stats: /api/owner-stats (with token)
+3. Villas: /api/owner-villas (with token)
+
+All should return JSON ✓
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ DATABASE NOTE
+────────────────
+NO database changes needed!
+owner_id column already exists in your bookings table.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,51 @@
+===============================================
+SIMPLE 3-STEP FIX
+===============================================
+
+YOU'RE GETTING "Unexpected token '<'" ERROR
+BECAUSE YOU HAVEN'T UPLOADED THE FIXED FILES YET!
+
+───────────────────────────────────────────────
+
+STEP 1: UPLOAD THESE 8 FILES TO YOUR SERVER
+───────────────────────────────────────────────
+
+Upload these files (from this project folder to your server):
+
+1. routes.php                  → Upload to project root
+2. App/Models/Admin.php        → Upload to App/Models/ folder
+3. App/Models/Owner.php        → Upload to App/Models/ folder
+4. App/Models/Booking.php      → Upload to App/Models/ folder
+5. App/Models/Villa.php        → Upload to App/Models/ folder
+6. App/Models/VillaImages.php  → Upload to App/Models/ folder
+7. App/Models/OwnerStats.php   → Upload to App/Models/ folder
+8. App/Models/UserStats.php    → Upload to App/Models/ folder
+
+Use: cPanel File Manager, FTP, or SSH
+
+───────────────────────────────────────────────
+
+STEP 2: VERIFY THE FIX
+───────────────────────────────────────────────
+
+Visit this URL in your browser:
+https://topmost.in/test-routes.php
+
+Should show: "status": "FIXED"
+
+───────────────────────────────────────────────
+
+STEP 3: TEST YOUR ENDPOINTS
+───────────────────────────────────────────────
+
+Now test:
+- /api/owner-stats
+- /api/owner-villas
+
+They should return JSON (not HTML errors)
+
+===============================================
+
+THAT'S IT! NO DATABASE CHANGES NEEDED!
+
+===============================================
