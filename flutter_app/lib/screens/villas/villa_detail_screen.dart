@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import '../../models/villa.dart';
 
@@ -12,7 +11,14 @@ class VillaDetailScreen extends StatefulWidget {
 }
 
 class _VillaDetailScreenState extends State<VillaDetailScreen> {
+  final PageController _pageController = PageController();
   int _currentImageIndex = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,55 +41,57 @@ class _VillaDetailScreenState extends State<VillaDetailScreen> {
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: 300,
-                      viewportFraction: 1.0,
-                      onPageChanged: (index, reason) {
+                  SizedBox(
+                    height: 300,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: images.length,
+                      onPageChanged: (index) {
                         setState(() {
                           _currentImageIndex = index;
                         });
                       },
-                    ),
-                    items: images.map((imageUrl) {
-                      return CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
+                      itemBuilder: (context, index) {
+                        return CachedNetworkImage(
+                          imageUrl: images[index],
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.villa, size: 64),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: images.asMap().entries.map((entry) {
-                        return Container(
-                          width: 8,
-                          height: 8,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentImageIndex == entry.key
-                                ? Colors.white
-                                : Colors.white.withOpacity(0.4),
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.villa, size: 64),
                           ),
                         );
-                      }).toList(),
+                      },
                     ),
                   ),
+                  if (images.length > 1)
+                    Positioned(
+                      bottom: 16,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(images.length, (index) {
+                          return Container(
+                            width: 8,
+                            height: 8,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentImageIndex == index
+                                  ? Colors.white
+                                  : Colors.white.withOpacity(0.4),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
                 ],
               ),
             ),
