@@ -55,15 +55,15 @@ class Villa {
     }
 
     return Villa(
-      id: json['id'] ?? 0,
-      ownerId: json['owner_id'] ?? 0,
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      ownerId: int.tryParse(json['owner_id']?.toString() ?? '0') ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       location: json['location'] ?? '',
       pricePerNight: double.tryParse(json['price_per_night']?.toString() ?? '0') ?? 0.0,
-      bedrooms: json['bedrooms'] ?? 0,
-      bathrooms: json['bathrooms'] ?? 0,
-      maxGuests: json['max_guests'] ?? 0,
+      bedrooms: int.tryParse(json['bedrooms']?.toString() ?? '0') ?? 0,
+      bathrooms: int.tryParse(json['bathrooms']?.toString() ?? '0') ?? 0,
+      maxGuests: int.tryParse(json['max_guests']?.toString() ?? '0') ?? 0,
       image: json['image'],
       images: imagesList,
       amenities: json['amenities'] ?? '',
