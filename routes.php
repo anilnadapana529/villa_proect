@@ -105,6 +105,9 @@ if ($role === "admin") {
     if ($endpoint === "admin-villas") $admin->villas();
     if ($endpoint === "admin-approve-villa") $admin->approveVilla();
     if ($endpoint === "admin-reject-villa") $admin->rejectVilla();
+    if ($endpoint === "admin-users") $admin->users();
+    if ($endpoint === "admin-bookings") $admin->bookings();
+    if ($endpoint === "admin-payments") $admin->payments();
     exit;
 }
 

@@ -142,5 +142,73 @@ class AdminController
 
         Response::json(["status" => true]);
     }
+
+    /** ------------------------------
+     *  LIST ALL USERS
+     *  ------------------------------ */
+    public function users()
+    {
+        $this->requireAdmin();
+
+        $db = \App\Core\Database::connect();
+        $result = $db->query("SELECT * FROM users ORDER BY created_at DESC");
+        $users = $result->fetch_all(MYSQLI_ASSOC);
+
+        Response::json([
+            "status" => true,
+            "users" => $users
+        ]);
+    }
+
+    /** ------------------------------
+     *  LIST ALL BOOKINGS
+     *  ------------------------------ */
+    public function bookings()
+    {
+        $this->requireAdmin();
+
+        $db = \App\Core\Database::connect();
+        $result = $db->query("
+            SELECT b.*,
+                   v.name as villa_name,
+                   u.name as user_name,
+                   o.name as owner_name
+            FROM bookings b
+            LEFT JOIN villas v ON b.villa_id = v.id
+            LEFT JOIN users u ON b.user_id = u.id
+            LEFT JOIN owners o ON b.owner_id = o.id
+            ORDER BY b.created_at DESC
+        ");
+        $bookings = $result->fetch_all(MYSQLI_ASSOC);
+
+        Response::json([
+            "status" => true,
+            "bookings" => $bookings
+        ]);
+    }
+
+    /** ------------------------------
+     *  LIST ALL PAYMENTS
+     *  ------------------------------ */
+    public function payments()
+    {
+        $this->requireAdmin();
+
+        $db = \App\Core\Database::connect();
+        $result = $db->query("
+            SELECT p.*,
+                   u.name as user_name,
+                   u.email as user_email
+            FROM payments p
+            LEFT JOIN users u ON p.user_id = u.id
+            ORDER BY p.created_at DESC
+        ");
+        $payments = $result->fetch_all(MYSQLI_ASSOC);
+
+        Response::json([
+            "status" => true,
+            "payments" => $payments
+        ]);
+    }
 }
 
