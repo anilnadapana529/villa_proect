@@ -1,0 +1,52 @@
+==============================================================
+TEST THESE URLs TO DIAGNOSE THE ISSUE
+==============================================================
+
+You say you uploaded the files but still getting errors.
+Let's find out what's wrong:
+
+--------------------------------------------------------------
+TEST 1: Check if PHP is working
+--------------------------------------------------------------
+URL: https://topmost.in/public/test.php
+
+What it does: Shows which files exist and which classes load
+Expected: JSON with "success": true
+
+--------------------------------------------------------------
+TEST 2: Check if routes.php was uploaded correctly
+--------------------------------------------------------------
+URL: https://topmost.in/public/test-routes.php
+
+What it does: Checks if routes.php has the exit; fix
+Expected: JSON with "status": "FIXED"
+
+--------------------------------------------------------------
+TEST 3: Test Owner Login
+--------------------------------------------------------------
+URL: https://topmost.in/api/owner-login
+Method: POST
+Body: {"email": "owner@example.com", "password": "yourpass"}
+
+Expected: JSON with token
+
+--------------------------------------------------------------
+TEST 4: Test Owner Stats (with token from Test 3)
+--------------------------------------------------------------
+URL: https://topmost.in/api/owner-stats
+Method: GET
+Header: Authorization: Bearer YOUR_TOKEN_HERE
+
+Expected: JSON with stats
+
+--------------------------------------------------------------
+
+INSTRUCTIONS:
+1. Test URL 1 and URL 2 first
+2. Share the output here
+3. This will tell us exactly what's wrong
+
+If URL 1 or URL 2 returns HTML or PHP error → Files not uploaded correctly
+If URL 1 and URL 2 work but URL 4 fails → Different issue (auth/database)
+
+==============================================================
