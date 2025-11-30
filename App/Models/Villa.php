@@ -40,15 +40,19 @@ class Villa
     /** Fetch Villa Detail with Images */
     public function getById(int $id): ?array
     {
-        $villa = $this->db->query("SELECT * FROM villas WHERE id=$id LIMIT 1");
+        $stmt = $this->db->prepare("SELECT * FROM villas WHERE id=? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        if ($villa->num_rows === 0) return null;
+        if ($result->num_rows === 0) return null;
 
-        $villa = $villa->fetch_assoc();
+        $villa = $result->fetch_assoc();
 
-        $images = $this->db->query("
-            SELECT image FROM villa_images WHERE villa_id=$id
-        ")->fetch_all(MYSQLI_ASSOC);
+        $stmt2 = $this->db->prepare("SELECT image FROM villa_images WHERE villa_id=?");
+        $stmt2->bind_param("i", $id);
+        $stmt2->execute();
+        $images = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
 
         return [
             "villa" => $villa,
@@ -75,23 +79,23 @@ class Villa
     /** Update a villa */
     public function update(int $id, array $data): bool
     {
-        $title = $this->db->real_escape_string($data['title']);
-        $location = $this->db->real_escape_string($data['location']);
-        $price = $data['price'];
-
-        return $this->db->query("
-            UPDATE villas SET 
-            title='$title',
-            location='$location',
-            price=$price
-            WHERE id=$id
+        $stmt = $this->db->prepare("
+            UPDATE villas SET
+            title=?,
+            location=?,
+            price=?
+            WHERE id=?
         ");
+        $stmt->bind_param("ssdi", $data['title'], $data['location'], $data['price'], $id);
+        return $stmt->execute();
     }
 
     /** Delete villa */
     public function delete(int $id): bool
     {
-        return $this->db->query("DELETE FROM villas WHERE id=$id");
+        $stmt = $this->db->prepare("DELETE FROM villas WHERE id=?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
     }
     public function search($keyword)
     {

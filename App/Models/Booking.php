@@ -30,14 +30,19 @@ class Booking
     {
         $pdo = Database::instance();
 
+        $ownerStmt = $pdo->prepare("SELECT owner_id FROM villas WHERE id = ?");
+        $ownerStmt->execute([$d['villa_id']]);
+        $ownerId = $ownerStmt->fetchColumn();
+
         $stmt = $pdo->prepare("
-            INSERT INTO bookings (user_id, villa_id, check_in, check_out, total_amount, status)
-            VALUES (?, ?, ?, ?, ?, 'confirmed')
+            INSERT INTO bookings (user_id, villa_id, owner_id, check_in, check_out, total_amount, status)
+            VALUES (?, ?, ?, ?, ?, ?, 'confirmed')
         ");
 
         return $stmt->execute([
             $d['user_id'],
             $d['villa_id'],
+            $ownerId,
             $d['check_in'],
             $d['check_out'],
             $d['amount']

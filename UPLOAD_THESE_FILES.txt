@@ -1,56 +1,39 @@
-===============================================
-  FILES TO UPLOAD TO FIX API ERRORS
-===============================================
+FILES TO UPLOAD TO YOUR SERVER
+===============================
 
-Upload these 6 files to your server at topmost.in:
+Upload these 6 files to fix all database and security issues:
 
-1. routes.php
-   - Fixed: Converts dashes to underscores for method names
+1. App/Models/Admin.php
+   → Fixed table name from "admins" to "admin"
 
-2. App/Controllers/AuthController.php
-   - Fixed: Proper namespaces and login methods (admin_login, owner_login, user_login)
+2. App/Models/Booking.php
+   → Added owner_id logic when creating bookings
 
-3. App/Core/Auth.php
-   - Fixed: Added namespace declaration
+3. App/Models/Villa.php
+   → Fixed SQL injection vulnerabilities
+   → Now uses prepared statements
 
-4. App/Models/Admin.php
-   - Fixed: Removed incorrect require, added proper namespace and database methods
+4. App/Models/VillaImages.php
+   → Fixed SQL injection vulnerabilities
+   → Now uses prepared statements
 
-5. App/Models/Owner.php
-   - Fixed: Removed incorrect require, added proper namespace and database methods
+5. App/Models/OwnerStats.php
+   → Fixed SQL injection vulnerabilities
+   → Now uses prepared statements
 
-6. App/Models/User.php
-   - Fixed: Removed incorrect require, added proper namespace and database methods
+6. App/Models/UserStats.php
+   → Fixed SQL injection vulnerabilities
+   → Now uses prepared statements
 
-===============================================
-  HOW TO UPLOAD
-===============================================
+AFTER UPLOADING FILES:
+======================
 
-Option 1: Using FTP/SFTP
-- Connect to your server using FileZilla or similar
-- Upload each file to its corresponding location
+Run this SQL in phpMyAdmin to add the missing owner_id column:
 
-Option 2: Using cPanel File Manager
-- Login to cPanel
-- Go to File Manager
-- Navigate to public_html folder
-- Upload each file to its location
+ALTER TABLE bookings
+ADD COLUMN owner_id INT DEFAULT NULL AFTER villa_id;
 
-Option 3: Using SSH/Terminal
-- Use scp command to upload files
+(Full SQL is in database_fixes.sql)
 
-===============================================
-  AFTER UPLOADING
-===============================================
-
-Test the API using: https://topmost.in/api-test.html
-
-The following endpoints should work:
-- /home-data (public)
-- /admin-login (post email + password)
-- /owner-login (post email + password)
-- /user-login (post email + password)
-- /admin-stats (requires JWT token)
-- /owner-stats (requires JWT token)
-
-===============================================
+Then test admin login at:
+https://topmost.in/api-test.html
