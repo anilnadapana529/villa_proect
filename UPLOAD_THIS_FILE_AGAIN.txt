@@ -1,53 +1,69 @@
-╔══════════════════════════════════════════════════════════════╗
-║           YOU NEED TO RE-UPLOAD THIS FILE:                    ║
-║                                                               ║
-║                      routes.php                               ║
-║                                                               ║
-║  Location: Project root (same folder as App/ directory)       ║
-╚══════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════
+              UPLOAD routes.php AGAIN (FIXED!)
+═══════════════════════════════════════════════════════════════
 
-DIAGNOSIS RESULTS:
-──────────────────
-Your tests show routes.php on your server is the OLD version.
+WHAT WAS WRONG:
+───────────────
+Using header('Location: ...') was redirecting and showing the 
+full path in the browser URL bar:
+  https://topmost.in/web/pages/home.php ❌
 
-WHAT'S WRONG:
+WHAT'S FIXED:
 ─────────────
-Current (on your server) - Line 56-59:
-    if (!$auth["status"]) {
-        Response::json(["status" => false, "message" => "Unauthorized"], 401);
-    }
-    ↑ No exit; here - this is the bug!
+Now using include() to load the page content directly, keeping
+clean URLs in the browser:
+  https://topmost.in ✓
+  https://topmost.in/admin ✓
+  https://topmost.in/owner ✓
 
-Should be (in the fixed file):
-    if (!$auth["status"]) {
-        Response::json(["status" => false, "message" => "Unauthorized"], 401);
-        exit;  ← THIS LINE IS MISSING ON YOUR SERVER
-    }
+═══════════════════════════════════════════════════════════════
 
-HOW TO FIX:
-───────────
-Option A: Upload via cPanel (Easiest)
-  1. cPanel → File Manager
-  2. Go to your project root folder
-  3. Find routes.php → Right click → Delete
-  4. Click Upload button
-  5. Select routes.php from THIS project folder
-  6. Done!
+UPLOAD THIS FILE:
+─────────────────
 
-Option B: Edit Directly (Quick)
-  1. cPanel → File Manager
-  2. Find routes.php → Right click → Edit
-  3. Find line 57-58 (search for "Unauthorized")
-  4. Add "    exit;" on a new line after line 57
-  5. Save
+✓ routes.php → /public_html/routes.php
 
-THEN:
-─────
-Visit: https://topmost.in/public/test-routes.php
+(Replace the one you uploaded before)
 
-Should change from:
-  "status": "NOT FIXED"
-To:
-  "status": "FIXED"
+═══════════════════════════════════════════════════════════════
 
-THAT'S IT! Problem solved!
+AFTER UPLOADING:
+────────────────
+
+Test these URLs (URL should stay clean):
+
+1. https://topmost.in
+   URL stays: https://topmost.in ✓
+   Shows: Animated homepage
+
+2. https://topmost.in/admin
+   URL stays: https://topmost.in/admin ✓
+   Shows: Login page with "Sign in as Admin"
+
+3. https://topmost.in/owner
+   URL stays: https://topmost.in/owner ✓
+   Shows: Login page with "Sign in as Owner"
+
+4. https://topmost.in/register
+   URL stays: https://topmost.in/register ✓
+   Shows: Registration page
+
+═══════════════════════════════════════════════════════════════
+
+HOW IT WORKS NOW:
+─────────────────
+
+Request: https://topmost.in/admin
+  ↓
+.htaccess sends to: /public/index.php
+  ↓
+index.php loads: routes.php
+  ↓
+routes.php checks: Is "admin" a web route? YES!
+  ↓
+routes.php does: include '/web/pages/login.php'
+  ↓
+Browser shows: Page content
+URL shows: https://topmost.in/admin (clean!)
+
+═══════════════════════════════════════════════════════════════

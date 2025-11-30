@@ -20,21 +20,26 @@ $endpoint = end($parts);
 
 // Special handling for web page routes
 $webRoutes = [
-    '' => '/web/pages/home.php',
-    'admin' => '/web/pages/login.php?type=admin',
-    'owner' => '/web/pages/login.php?type=owner',
-    'user' => '/web/pages/login.php?type=user',
-    'login' => '/web/pages/login.php',
-    'register' => '/web/pages/register.php',
-    'logout' => '/web/pages/logout.php',
-    'villas' => '/web/pages/villas.php',
-    'dashboard' => '/web/pages/user-dashboard.php',
-    'admin-dashboard' => '/web/pages/admin-dashboard.php',
-    'owner-dashboard' => '/web/pages/owner-dashboard.php',
+    '' => __DIR__ . '/web/pages/home.php',
+    'admin' => __DIR__ . '/web/pages/login.php',
+    'owner' => __DIR__ . '/web/pages/login.php',
+    'user' => __DIR__ . '/web/pages/login.php',
+    'login' => __DIR__ . '/web/pages/login.php',
+    'register' => __DIR__ . '/web/pages/register.php',
+    'logout' => __DIR__ . '/web/pages/logout.php',
+    'villas' => __DIR__ . '/web/pages/villas.php',
+    'dashboard' => __DIR__ . '/web/pages/user-dashboard.php',
+    'admin-dashboard' => __DIR__ . '/web/pages/admin-dashboard.php',
+    'owner-dashboard' => __DIR__ . '/web/pages/owner-dashboard.php',
 ];
 
-if (isset($webRoutes[$endpoint])) {
-    header('Location: ' . $webRoutes[$endpoint]);
+// Set type parameter for role-specific logins
+if (in_array($endpoint, ['admin', 'owner', 'user'])) {
+    $_GET['type'] = $endpoint;
+}
+
+if (isset($webRoutes[$endpoint]) && file_exists($webRoutes[$endpoint])) {
+    include $webRoutes[$endpoint];
     exit;
 }
 
