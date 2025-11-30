@@ -43,7 +43,8 @@ switch ($endpoint) {
     case "owner-login":
     case "user-login":
         controller("AuthController");
-        (new App\Controllers\AuthController())->$endpoint();
+        $methodName = str_replace('-', '_', $endpoint);
+        (new App\Controllers\AuthController())->$methodName();
         exit;
 }
 
