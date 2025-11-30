@@ -55,6 +55,7 @@ $auth = Auth::validate();
 
 if (!$auth["status"]) {
     Response::json(["status" => false, "message" => "Unauthorized"], 401);
+    exit;
 }
 
 $role = $auth["role"];

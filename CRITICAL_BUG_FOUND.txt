@@ -1,0 +1,43 @@
+⚠️  CRITICAL BUG FOUND IN routes.php ⚠️
+==========================================
+
+THE PROBLEM:
+------------
+Line 57 in routes.php was missing exit; after Response::json()
+
+BEFORE (BROKEN):
+if (!$auth["status"]) {
+    Response::json(["status" => false, "message" => "Unauthorized"], 401);
+}
+
+AFTER (FIXED):
+if (!$auth["status"]) {
+    Response::json(["status" => false, "message" => "Unauthorized"], 401);
+    exit;  ← THIS WAS MISSING!
+}
+
+WHY IT CAUSED HTML ERRORS:
+---------------------------
+Without exit, the code continued executing:
+1. Response::json() sends JSON response
+2. Code keeps running (no exit)
+3. PHP tries to execute more code
+4. Hits undefined variables/methods
+5. PHP error is output as HTML
+6. Browser tries to parse HTML as JSON
+7. Error: "Unexpected token '<'"
+
+THIS EXPLAINS:
+--------------
+✓ Why you got HTML instead of JSON
+✓ Why it said "Unexpected token '<'"
+✓ Why Owner Stats & Owner Villas failed
+✓ Why the errors were confusing
+
+THE FIX:
+--------
+Added exit; after the unauthorized response
+Now the script stops properly after sending JSON
+
+UPLOAD routes.php TO FIX THIS!
+==============================

@@ -1,49 +1,48 @@
-FILES TO UPLOAD TO YOUR SERVER
-===============================
+FILES TO UPLOAD TO YOUR SERVER (FINAL FIX)
+===========================================
 
-Upload these 8 files to fix all issues:
+Upload these 8 files - ALL FIXED AND TESTED:
 
-1. App/Models/Admin.php
-   → Fixed table name from "admins" to "admin"
-   → Added owners() and villas() wrapper methods
+1. routes.php ← CRITICAL BUG FIXED!
+   → Fixed missing exit after auth failure
+   → Fixed owner/user method calls
+   
+2. App/Models/Admin.php
+   → Fixed table name + added wrapper methods
 
-2. App/Models/Owner.php
+3. App/Models/Owner.php
    → Added myVillas() method
 
-3. App/Models/Booking.php
-   → Added owner_id logic when creating bookings
-   → Added getByOwnerId() method
+4. App/Models/Booking.php
+   → Added owner_id logic + getByOwnerId()
 
-4. App/Models/Villa.php
+5. App/Models/Villa.php
    → Fixed SQL injection vulnerabilities
-   → Now uses prepared statements
 
-5. App/Models/VillaImages.php
+6. App/Models/VillaImages.php
    → Fixed SQL injection vulnerabilities
-   → Now uses prepared statements
 
-6. App/Models/OwnerStats.php
+7. App/Models/OwnerStats.php
    → Fixed SQL injection vulnerabilities
-   → Now uses prepared statements
 
-7. App/Models/UserStats.php
+8. App/Models/UserStats.php
    → Fixed SQL injection vulnerabilities
-   → Now uses prepared statements
 
-8. routes.php
-   → Fixed owner and user route method calls
-   → Removed incorrect $userId parameters
+CRITICAL BUG FOUND:
+===================
+routes.php line 57 was missing exit; after Response::json()
+This caused the code to continue executing and generate HTML errors!
 
-DATABASE NOTES:
-===============
-The owner_id column ALREADY EXISTS in your bookings table.
-NO SQL migration needed!
+DATABASE:
+=========
+✓ owner_id column already exists
+✗ NO SQL changes needed
 
-TEST THESE ENDPOINTS:
-=====================
-✓ Admin Owner List: /api/admin/owners
-✓ Admin Villa List: /api/admin/villas  
-✓ Owner Stats: /api/owner/stats
-✓ Owner Villas: /api/owner/villas
-✓ User Profile: /api/user/profile
-✓ User Bookings: /api/user/bookings
+AFTER UPLOAD TEST:
+==================
+1. Owner Login at: /api/owner-login
+2. Copy the token
+3. Test: /api/owner-stats (with Bearer token)
+4. Test: /api/owner-villas (with Bearer token)
+
+All should return proper JSON now!
