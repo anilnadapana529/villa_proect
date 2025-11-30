@@ -17,7 +17,15 @@ class _VillasScreenState extends State<VillasScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<VillaProvider>(context, listen: false).fetchVillas();
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null && args['search'] != null) {
+        _searchController.text = args['search'];
+        Provider.of<VillaProvider>(context, listen: false).searchVillas(
+          location: args['search'],
+        );
+      } else {
+        Provider.of<VillaProvider>(context, listen: false).fetchVillas();
+      }
     });
   }
 
