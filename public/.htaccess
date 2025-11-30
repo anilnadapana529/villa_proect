@@ -1,16 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Handle OPTIONS requests for CORS
-    RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule ^(.*)$ $1 [R=200,L]
+    # API requests go to api.php
+    RewriteRule ^api/(.*)$ api.php [L,QSA]
 
-    # Redirect Trailing Slashes
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)/$ /$1 [L,R=301]
+    # Allow direct access to PHP files
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
 
-    # Handle Front Controller
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    # Default to home.php
+    RewriteRule ^$ home.php [L]
 </IfModule>

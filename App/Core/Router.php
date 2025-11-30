@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 class Router {
 
     private $routes = [
@@ -29,8 +31,12 @@ class Router {
         $method = $_SERVER["REQUEST_METHOD"];
         $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
-        // Remove /api base path
         $uri = str_replace("/api", "", $uri);
+
+        if (!isset($this->routes[$method])) {
+            Response::error("Method not allowed", 405);
+            return;
+        }
 
         foreach ($this->routes[$method] as $route => $handler) {
 
