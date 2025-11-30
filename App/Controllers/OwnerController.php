@@ -63,20 +63,52 @@ class OwnerController
     {
         $auth = $this->requireOwner();
 
-        $body = json_decode(file_get_contents("php://input"), true);
+        $db = \App\Core\Database::connect();
 
-        $data = [
-            "title"     => $body["title"] ?? "",
-            "price"     => $body["price"] ?? 0,
-            "location"  => $body["location"] ?? "",
-            "owner_id"  => $auth["id"],
-        ];
+        $name = $db->real_escape_string($_POST['name'] ?? '');
+        $location = $db->real_escape_string($_POST['location'] ?? '');
+        $address = $db->real_escape_string($_POST['address'] ?? '');
+        $description = $db->real_escape_string($_POST['description'] ?? '');
+        $guests = intval($_POST['guests'] ?? 0);
+        $bedrooms = intval($_POST['bedrooms'] ?? 0);
+        $beds = intval($_POST['beds'] ?? 0);
+        $bathrooms = intval($_POST['bathrooms'] ?? 0);
+        $weekdayPrice = floatval($_POST['weekday_price'] ?? 0);
+        $weekendPrice = floatval($_POST['weekend_price'] ?? 0);
+        $amenities = $db->real_escape_string($_POST['amenities'] ?? '');
 
-        $villaId = (new Villa())->create($data);
+        $ownerId = $auth['id'];
+
+        $query = "INSERT INTO villas (owner_id, name, location, address, description, amenities, guests, bedrooms, beds, bathrooms, weekday_price, weekend_price, status, created_at)
+                  VALUES ($ownerId, '$name', '$location', '$address', '$description', '$amenities', $guests, $bedrooms, $beds, $bathrooms, $weekdayPrice, $weekendPrice, 'pending', NOW())";
+
+        $db->query($query);
+        $villaId = $db->insert_id;
+
+        if (isset($_FILES['images']) && is_array($_FILES['images']['name'])) {
+            $uploadDir = __DIR__ . '/../../public/uploads/villas/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            foreach ($_FILES['images']['name'] as $key => $filename) {
+                if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
+                    $tmpName = $_FILES['images']['tmp_name'][$key];
+                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                    $newFilename = time() . '_' . rand(1000, 9999) . '.' . $ext;
+                    $destination = $uploadDir . $newFilename;
+
+                    if (move_uploaded_file($tmpName, $destination)) {
+                        $db->query("INSERT INTO villa_images (villa_id, image) VALUES ($villaId, '$newFilename')");
+                    }
+                }
+            }
+        }
 
         Response::json([
             "status" => true,
-            "villa_id" => $villaId
+            "villa_id" => $villaId,
+            "message" => "Villa submitted for approval"
         ]);
     }
 
