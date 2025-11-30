@@ -94,22 +94,26 @@ class Villa
         return $this->db->query("DELETE FROM villas WHERE id=$id");
     }
     public function search($keyword)
-{
-    $sql = "
-        SELECT id, title AS name, city, country, image
-        FROM villas
-        WHERE 
-            title LIKE :kw
-            OR city LIKE :kw
-            OR country LIKE :kw
-    ";
+    {
+        $keyword = $this->db->real_escape_string($keyword);
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute([
-        ":kw" => "%$keyword%"
-    ]);
+        $sql = "
+            SELECT id, name, location
+            FROM villas
+            WHERE
+                name LIKE '%{$keyword}%'
+                OR location LIKE '%{$keyword}%'
+                OR address LIKE '%{$keyword}%'
+            AND status = 'approved'
+        ";
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 
 }

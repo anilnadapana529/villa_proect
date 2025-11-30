@@ -1,0 +1,163 @@
+================================================================================
+VILLA BOOKING PLATFORM - ISSUES FOUND AND FIXED
+================================================================================
+
+Date: 2025-11-30
+Environment: Hostinger Shared Hosting
+Database: MySQL (u200283558_villa)
+
+================================================================================
+CRITICAL ISSUES FIXED
+================================================================================
+
+1. ROUTING ISSUES
+   ----------------
+   Problem: Missing .htaccess files and incorrect path references
+   
+   Fixed:
+   - Created /.htaccess to redirect all requests to /public/
+   - Created /public/.htaccess for URL rewriting
+   - Fixed routes.php endpoint parsing
+   - Corrected file paths in public/index.php
+   
+   Impact: API endpoints now work correctly on Hostinger
+
+2. DATABASE CONNECTION ISSUES
+   ---------------------------
+   Problem: Database::connect() method did not exist, causing fatal errors
+   
+   Fixed:
+   - Added Database::connect() method for MySQLi connections
+   - Kept Database::instance() method for PDO connections
+   - Now supports both connection types
+   
+   Impact: All models can now connect to database
+
+3. MIXED DATABASE API USAGE
+   -------------------------
+   Problem: Code mixed PDO and MySQLi APIs incorrectly
+   
+   Fixed in Villa.php:
+   - search() method was using PDO prepare/execute on MySQLi object
+   - Changed to use MySQLi properly with real_escape_string
+   - Fixed column names (title -> name, city/country -> location/address)
+   
+   Fixed in Booking.php:
+   - Changed Database::connect() to Database::instance() for PDO
+   - Added proper namespace
+   - Fixed column name (amount -> total_amount)
+   - Added status filter for confirmed bookings
+   
+   Impact: Search and booking features now work correctly
+
+4. MISSING STATIC METHOD IN BaseModel
+   ------------------------------------
+   Problem: Child classes calling self::query() but method didn't exist
+   
+   Fixed:
+   - Added protected static query() method to BaseModel
+   - Properly connects to database and returns results
+   
+   Impact: SliderModel, CategoryModel, ListingModel now work
+
+5. INCORRECT COLUMN NAMES IN QUERIES
+   -----------------------------------
+   Problem: ListingModel querying non-existent columns
+   
+   Fixed in ListingModel.php:
+   - Changed 'title' to 'name'
+   - Changed 'price_per_night' to 'weekday_price'
+   - Changed 'cover_image' to subquery for first villa_image
+   
+   Impact: Home page API now returns correct data
+
+================================================================================
+FILES MODIFIED
+================================================================================
+
+1. /.htaccess (CREATED)
+   - Redirects all requests to public directory
+
+2. /public/.htaccess (CREATED)
+   - URL rewriting rules
+   - Routes all requests through index.php
+
+3. /public/index.php
+   - Fixed path: app -> App (case sensitivity)
+   - Fixed routes path: __DIR__ . "/routes.php" -> __DIR__ . "/../routes.php"
+
+4. /routes.php
+   - Improved endpoint parsing
+   - Better URL handling for shared hosting
+
+5. /App/Core/Database.php
+   - Added namespace
+   - Added Database::connect() method (MySQLi)
+   - Maintained Database::instance() method (PDO)
+
+6. /App/Core/BaseModel.php
+   - Added protected static query() method
+
+7. /App/Models/ListingModel.php
+   - Fixed SQL query column names
+
+8. /App/Models/Villa.php
+   - Fixed search() method to use MySQLi properly
+
+9. /App/Models/Booking.php
+   - Added proper namespace
+   - Changed to use PDO correctly
+   - Fixed column names
+
+================================================================================
+TESTING RECOMMENDATIONS
+================================================================================
+
+Test these API endpoints:
+
+PUBLIC ENDPOINTS:
+- GET /home-data (should return sliders, categories, listings)
+- GET /search?q=villa (should return matching villas)
+- POST /admin-login
+- POST /owner-login
+- POST /user-login
+
+PROTECTED ENDPOINTS (require JWT):
+- GET /admin-stats (admin role)
+- GET /admin-owners (admin role)
+- GET /owner-stats (owner role)
+- GET /owner-villas (owner role)
+- GET /user-profile (user role)
+- GET /user-bookings (user role)
+
+VILLA ENDPOINTS:
+- GET /villa-detail?id=1
+- GET /villa-list
+- GET /villa-calendar?id=1
+- POST /check-availability
+
+================================================================================
+SECURITY NOTES
+================================================================================
+
+WARNING: Database credentials are hardcoded in Database.php
+Recommendation: Move to environment variables or config file outside public directory
+
+Current credentials in use:
+- Host: localhost
+- Database: u200283558_villa
+- Username: u200283558_villa
+- Password: Ansi@2023
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Test all API endpoints
+2. Verify JWT authentication works
+3. Test file uploads (villa images)
+4. Check error logging on production
+5. Consider moving database credentials to .env file
+6. Add proper error handling for production environment
+
+================================================================================

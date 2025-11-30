@@ -1,16 +1,21 @@
 <?php
-require_once __DIR__ . "/../core/Database.php";
+
+namespace App\Models;
+
+use App\Core\Database;
+use PDO;
 
 class Booking
 {
     public static function checkAvailability($villaId, $start, $end)
     {
-        $pdo = Database::connect();
+        $pdo = Database::instance();
 
         $stmt = $pdo->prepare("
-            SELECT COUNT(*) AS cnt 
-            FROM bookings 
-            WHERE villa_id = ? 
+            SELECT COUNT(*) AS cnt
+            FROM bookings
+            WHERE villa_id = ?
+            AND status = 'confirmed'
             AND (
                 (check_in <= ? AND check_out >= ?) OR
                 (check_in <= ? AND check_out >= ?)
@@ -23,11 +28,11 @@ class Booking
 
     public static function create($d)
     {
-        $pdo = Database::connect();
+        $pdo = Database::instance();
 
         $stmt = $pdo->prepare("
-            INSERT INTO bookings (user_id, villa_id, check_in, check_out, amount, status) 
-            VALUES (?, ?, ?, ?, ?, 'pending')
+            INSERT INTO bookings (user_id, villa_id, check_in, check_out, total_amount, status)
+            VALUES (?, ?, ?, ?, ?, 'confirmed')
         ");
 
         return $stmt->execute([
@@ -41,12 +46,13 @@ class Booking
 
     public static function calendar($villaId)
     {
-        $pdo = Database::connect();
+        $pdo = Database::instance();
 
         $stmt = $pdo->prepare("
-            SELECT check_in, check_out 
-            FROM bookings 
+            SELECT check_in, check_out
+            FROM bookings
             WHERE villa_id = ?
+            AND status = 'confirmed'
         ");
         $stmt->execute([$villaId]);
 

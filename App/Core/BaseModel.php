@@ -15,6 +15,19 @@ class BaseModel
         $this->db = Database::connect();
     }
 
+    /** Static query helper for child classes */
+    protected static function query(string $sql): array
+    {
+        $db = Database::connect();
+        $result = $db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     /** Find by id */
     public function find(int $id): ?array
     {
@@ -51,7 +64,7 @@ class BaseModel
         $values = "'" . implode("','", array_map([$this->db, 'real_escape_string'], array_values($data))) . "'";
 
         $this->db->query("
-            INSERT INTO {$this->table} ($columns) 
+            INSERT INTO {$this->table} ($columns)
             VALUES ($values)
         ");
 
@@ -71,8 +84,8 @@ class BaseModel
         $setQuery = implode(",", $pairs);
 
         return $this->db->query("
-            UPDATE {$this->table} 
-            SET $setQuery 
+            UPDATE {$this->table}
+            SET $setQuery
             WHERE id=$id
         ");
     }
