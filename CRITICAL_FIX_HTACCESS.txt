@@ -1,0 +1,75 @@
+═══════════════════════════════════════════════════════════════
+                CRITICAL FIX - UPLOAD THIS FILE
+═══════════════════════════════════════════════════════════════
+
+THE PROBLEM:
+────────────
+When you visit https://topmost.in/web/pages/home.php
+You get: {"status":false,"message":"Unauthorized"}
+
+This is because the root .htaccess file was redirecting ALL requests
+(including /web/) to the /public/ folder, where they were being
+treated as API endpoints instead of web pages.
+
+THE FIX:
+────────
+Updated the root .htaccess to EXCLUDE /web/ folder from the rewrite.
+
+Now requests to /web/ will load the actual web pages,
+while requests to /api/ will go through the API router.
+
+═══════════════════════════════════════════════════════════════
+
+UPLOAD THIS FILE:
+─────────────────
+
+✓ .htaccess (UPDATED - excludes /web/ from rewrite)
+  → Upload to: /public_html/.htaccess
+
+IMPORTANT: This is the .htaccess in the ROOT of your project,
+           NOT the one in /public/.htaccess
+
+═══════════════════════════════════════════════════════════════
+
+AFTER UPLOADING:
+────────────────
+
+1. Upload the updated .htaccess file to /public_html/
+
+2. Visit: https://topmost.in/web/pages/home.php
+   → Should now show the beautiful homepage!
+
+3. Visit: https://topmost.in/web/pages/login.php
+   → Should show the login page
+
+4. API endpoints still work:
+   → https://topmost.in/api/home-data
+   → Returns JSON data correctly
+
+═══════════════════════════════════════════════════════════════
+
+WHAT CHANGED:
+─────────────
+
+OLD .htaccess (was redirecting everything):
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteRule ^(.*)$ public/$1 [L]
+
+NEW .htaccess (excludes /web/ folder):
+  RewriteCond %{REQUEST_URI} !^/web/
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteRule ^(.*)$ public/$1 [L]
+
+═══════════════════════════════════════════════════════════════
+
+HOW IT WORKS NOW:
+─────────────────
+
+✓ /web/pages/home.php → Loads web page directly
+✓ /api/home-data → Goes through public/index.php (API)
+✓ /uploads/image.jpg → Serves static files
+✓ / → Goes to public/index.php (API)
+
+Perfect separation of concerns!
+
+═══════════════════════════════════════════════════════════════
