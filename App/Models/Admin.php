@@ -31,7 +31,7 @@ class Admin
     }
     public function login($email, $password)
     {
-        $sql = "SELECT * FROM admins WHERE email = ? LIMIT 1";
+        $sql = "SELECT * FROM admin WHERE email = ? LIMIT 1";
         $admin = $this->fetch($sql, [$email]);
 
         if (!$admin) return false;
