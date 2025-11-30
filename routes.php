@@ -3,21 +3,19 @@
 use App\Core\Response;
 use App\Core\Auth;
 
-// REMOVE WRONG CODE
-// $uri = explode("/", trim($_SERVER['REQUEST_URI'], "/"));
-// $endpoint = $uri[count($uri) - 1];
-
 // ------------------------
 // CORRECT ENDPOINT PARSER
 // ------------------------
-$path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Remove domain and base folder
-$path = str_replace("index.php", "", $path);
-$path = str_replace("api.php", "", $path);
+// Remove common path components
+$uri = str_replace('/public/index.php', '', $uri);
+$uri = str_replace('/index.php', '', $uri);
+$uri = trim($uri, '/');
 
-// endpoint = last part
-$endpoint = basename($path);
+// Get endpoint (last part of the path)
+$parts = explode('/', $uri);
+$endpoint = end($parts) ?: 'home-data';
 
 // -------------------------------------------
 // Helper: Require Controller

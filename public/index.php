@@ -40,14 +40,14 @@ spl_autoload_register(function ($class) {
 // -----------------------------------------------------
 // LOAD CORE FILES
 // -----------------------------------------------------
-require_once __DIR__ . "/../app/Core/Database.php";
-require_once __DIR__ . "/../app/Core/Response.php";
-require_once __DIR__ . "/../app/Core/Auth.php";
+require_once __DIR__ . "/../App/Core/Database.php";
+require_once __DIR__ . "/../App/Core/Response.php";
+require_once __DIR__ . "/../App/Core/Auth.php";
 
 // -----------------------------------------------------
 // LOAD ROUTER
 // -----------------------------------------------------
-$routes = __DIR__ . "/routes.php";
+$routes = __DIR__ . "/../routes.php";
 
 if (!file_exists($routes)) {
     \App\Core\Response::json([
