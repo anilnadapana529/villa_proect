@@ -1,13 +1,17 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # API requests go to api.php
-    RewriteRule ^api/(.*)$ api.php [L,QSA]
+    # Handle CORS preflight
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
 
-    # Allow direct access to PHP files
+    # Serve existing files directly
     RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$
     RewriteRule ^ - [L]
 
-    # Default to home.php
-    RewriteRule ^$ home.php [L]
+    # Route everything else through index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L,QSA]
 </IfModule>

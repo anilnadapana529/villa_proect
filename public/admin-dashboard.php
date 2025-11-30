@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/../helpers/api.php";
+include __DIR__ . "/helpers/api.php";
 
 if (!API::isLoggedIn() || API::getUserRole() !== 'admin') {
     header("Location: login.php");

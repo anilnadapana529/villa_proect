@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../helpers/api.php";
+require_once __DIR__ . "/helpers/api.php";
 
 $villaId = $_GET['id'] ?? 0;
 if (!$villaId) {
@@ -20,7 +20,7 @@ $images = $villa['images'] ?? [];
 $isLoggedIn = API::isLoggedIn();
 $user = $isLoggedIn ? API::getUser() : null;
 
-include __DIR__ . "/../includes/header.php";
+include __DIR__ . "/includes/header.php";
 ?>
 
 <style>
@@ -462,4 +462,4 @@ document.getElementById('bookingForm').addEventListener('submit', async function
 <?php endif; ?>
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/includes/footer.php"; ?>

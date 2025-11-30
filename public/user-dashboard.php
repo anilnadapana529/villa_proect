@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/../helpers/api.php";
+include __DIR__ . "/helpers/api.php";
 
 if (!API::isLoggedIn() || API::getUserRole() !== 'user') {
     header("Location: login.php");
@@ -12,7 +12,7 @@ $user = API::getUser();
 $profile = API::get("user-profile", [], $token);
 $bookings = API::get("user-bookings", [], $token);
 
-include __DIR__ . "/../includes/header.php";
+include __DIR__ . "/includes/header.php";
 ?>
 
 <style>
@@ -298,4 +298,4 @@ function cancelBooking(bookingId) {
 }
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/includes/footer.php"; ?>

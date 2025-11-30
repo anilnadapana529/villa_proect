@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/../helpers/api.php";
+include __DIR__ . "/helpers/api.php";
 
 if (!API::isLoggedIn() || API::getUserRole() !== 'owner') {
     header("Location: login.php");
@@ -15,7 +15,7 @@ if (!$villaId) {
 $token = API::getToken();
 $user = API::getUser();
 
-include __DIR__ . "/../includes/header.php";
+include __DIR__ . "/includes/header.php";
 ?>
 
 <div class="add-villa-container">
@@ -43,4 +43,4 @@ include __DIR__ . "/../includes/header.php";
     </div>
 </div>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/includes/footer.php"; ?>

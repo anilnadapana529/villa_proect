@@ -5,9 +5,9 @@ echo "<h2>Files Check:</h2>";
 echo "<ul>";
 
 $files = [
-    'header' => __DIR__ . '/../includes/header.php',
-    'footer' => __DIR__ . '/../includes/footer.php',
-    'api' => __DIR__ . '/../helpers/api.php',
+    'header' => __DIR__ . '/includes/header.php',
+    'footer' => __DIR__ . '/includes/footer.php',
+    'api' => __DIR__ . '/helpers/api.php',
     'home' => __DIR__ . '/home.php',
     'login' => __DIR__ . '/login.php',
     'register' => __DIR__ . '/register.php',

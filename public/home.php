@@ -1,10 +1,10 @@
 <?php
-include __DIR__ . "/../helpers/api.php";
-include __DIR__ . "/../includes/header.php";
+include __DIR__ . "/helpers/api.php";
+include __DIR__ . "/includes/header.php";
 
-$data = API::get("home-data");
-$sliders = $data["sliders"] ?? [];
-$listings = $data["listings"] ?? [];
+$sliders = [];
+$categories = [];
+$listings = [];
 ?>
 
 <style>
@@ -460,4 +460,4 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
 });
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/includes/footer.php"; ?>

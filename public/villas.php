@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../helpers/api.php";
-include __DIR__ . "/../includes/header.php";
+require_once __DIR__ . "/helpers/api.php";
+include __DIR__ . "/includes/header.php";
 
 $location = trim($_GET['location'] ?? '');
 $checkIn = $_GET['check_in'] ?? '';
@@ -356,4 +356,4 @@ if (!empty($params)) {
     <?php endif; ?>
 </div>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/includes/footer.php"; ?>
