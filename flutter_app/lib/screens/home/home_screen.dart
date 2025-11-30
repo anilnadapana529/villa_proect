@@ -140,12 +140,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.person),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/user-dashboard');
-                  },
-                ),
+                if (authProvider.isAuthenticated)
+                  IconButton(
+                    icon: const Icon(Icons.person),
+                    onPressed: () {
+                      final role = authProvider.role;
+                      if (role == 'admin') {
+                        Navigator.pushNamed(context, '/admin-dashboard');
+                      } else if (role == 'owner') {
+                        Navigator.pushNamed(context, '/owner-dashboard');
+                      } else {
+                        Navigator.pushNamed(context, '/user-dashboard');
+                      }
+                    },
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Login'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF1E3A8A),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                          ),
+                          child: const Text('Sign Up'),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
             SliverToBoxAdapter(
@@ -339,6 +379,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickActions(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isAuthenticated = authProvider.isAuthenticated;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -366,19 +409,31 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildActionCard(
-                  icon: Icons.calendar_today,
-                  title: 'My Bookings',
+                  icon: isAuthenticated ? Icons.calendar_today : Icons.login,
+                  title: isAuthenticated ? 'My Bookings' : 'Login',
                   color: const Color(0xFF059669),
-                  onTap: () => Navigator.pushNamed(context, '/user-dashboard'),
+                  onTap: () {
+                    if (isAuthenticated) {
+                      Navigator.pushNamed(context, '/user-dashboard');
+                    } else {
+                      Navigator.pushNamed(context, '/login');
+                    }
+                  },
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildActionCard(
-                  icon: Icons.favorite,
-                  title: 'Favorites',
+                  icon: isAuthenticated ? Icons.favorite : Icons.app_registration,
+                  title: isAuthenticated ? 'Favorites' : 'Sign Up',
                   color: const Color(0xFFEF4444),
-                  onTap: () => Navigator.pushNamed(context, '/villas'),
+                  onTap: () {
+                    if (isAuthenticated) {
+                      Navigator.pushNamed(context, '/villas');
+                    } else {
+                      Navigator.pushNamed(context, '/register');
+                    }
+                  },
                 ),
               ),
             ],
