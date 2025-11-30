@@ -1,5 +1,10 @@
 RewriteEngine On
 
+# Allow direct access to installer
+RewriteCond %{REQUEST_URI} ^/install\.php$ [OR]
+RewriteCond %{REQUEST_URI} ^/setup_admin\.php$
+RewriteRule ^ - [L]
+
 # Redirect all requests to public directory
 RewriteCond %{REQUEST_URI} !^/public/
 RewriteCond %{REQUEST_URI} !^/web/
