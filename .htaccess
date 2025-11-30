@@ -1,4 +1,4 @@
-RewriteEngine On
+3 VX  RewriteEngine On
 
 # Allow direct access to installer
 RewriteCond %{REQUEST_URI} ^/install\.php$ [OR]
