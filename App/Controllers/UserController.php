@@ -98,8 +98,9 @@ class UserController
         $body = json_decode(file_get_contents("php://input"), true);
 
         $villaId = $body["villa_id"] ?? 0;
-        $start   = $body["start_date"] ?? "";
-        $end     = $body["end_date"] ?? "";
+        $start   = $body["start_date"] ?? $body["check_in"] ?? "";
+        $end     = $body["end_date"] ?? $body["check_out"] ?? "";
+        $guests  = $body["guests"] ?? 1;
 
         $bookingModel = new Booking();
 

@@ -70,6 +70,11 @@ switch ($endpoint) {
         (new App\Controllers\SearchController())->search();
         exit;
 
+    case "search-villas":
+        controller("SearchController");
+        (new App\Controllers\SearchController())->searchVillas();
+        exit;
+
     case "admin-login":
     case "owner-login":
     case "user-login":
@@ -139,6 +144,7 @@ if ($role === "user") {
     if ($endpoint === "update-user-profile") $user->updateProfile();
     if ($endpoint === "user-bookings") $user->bookings();
     if ($endpoint === "user-create-booking") $user->createBooking();
+    if ($endpoint === "create-booking") $user->createBooking();
     exit;
 }
 
