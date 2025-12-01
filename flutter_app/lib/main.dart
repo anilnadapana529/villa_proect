@@ -14,6 +14,7 @@ import 'screens/booking/booking_screen.dart';
 import 'screens/dashboard/user_dashboard_screen.dart';
 import 'screens/dashboard/owner_dashboard_screen.dart';
 import 'screens/dashboard/admin_dashboard_screen.dart';
+import 'screens/debug_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,6 +77,7 @@ class MyApp extends StatelessWidget {
           '/user-dashboard': (context) => const UserDashboardScreen(),
           '/owner-dashboard': (context) => const OwnerDashboardScreen(),
           '/admin-dashboard': (context) => const AdminDashboardScreen(),
+          '/debug': (context) => const DebugScreen(),
         },
       ),
     );

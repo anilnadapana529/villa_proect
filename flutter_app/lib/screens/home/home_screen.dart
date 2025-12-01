@@ -77,9 +77,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => villaProvider.fetchVillas(),
-                            child: const Text('Retry'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => villaProvider.fetchVillas(),
+                                child: const Text('Retry'),
+                              ),
+                              const SizedBox(width: 16),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pushNamed(context, '/debug'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                ),
+                                child: const Text('Debug API'),
+                              ),
+                            ],
                           ),
                         ],
                       ),
