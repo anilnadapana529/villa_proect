@@ -117,11 +117,11 @@ class ApiService {
       print('Fetching villas from: $baseUrl/villas');
       final response = await http.get(
         Uri.parse('$baseUrl/villas'),
-        headers: await getHeaders(includeAuth: true),
+        headers: await getHeaders(includeAuth: false),
       ).timeout(const Duration(seconds: 15));
 
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('Response body: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}...');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -148,7 +148,7 @@ class ApiService {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/villas/$id'),
-        headers: await getHeaders(includeAuth: true),
+        headers: await getHeaders(includeAuth: false),
       );
 
       if (response.statusCode == 200) {
@@ -159,6 +159,7 @@ class ApiService {
       }
       return null;
     } catch (e) {
+      print('Error fetching villa by ID: $e');
       return null;
     }
   }
@@ -232,7 +233,7 @@ class ApiService {
       final uri = Uri.parse('$baseUrl/search').replace(queryParameters: queryParams);
       final response = await http.get(
         uri,
-        headers: await getHeaders(includeAuth: true),
+        headers: await getHeaders(includeAuth: false),
       );
 
       if (response.statusCode == 200) {
@@ -245,6 +246,7 @@ class ApiService {
       }
       return [];
     } catch (e) {
+      print('Error searching villas: $e');
       return [];
     }
   }
