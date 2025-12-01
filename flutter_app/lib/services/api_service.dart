@@ -114,11 +114,26 @@ class ApiService {
 
   static Future<List<Villa>> getVillas() async {
     try {
+      print('═══════════════════════════════════════');
       print('Fetching villas from: $baseUrl/villas');
+
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      print('Headers: $headers');
+
       final response = await http.get(
         Uri.parse('$baseUrl/villas'),
-        headers: await getHeaders(includeAuth: true),
-      ).timeout(const Duration(seconds: 15));
+        headers: headers,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          print('ERROR: Request timed out after 15 seconds');
+          throw Exception('Request timed out');
+        },
+      );
 
       print('Response status: ${response.statusCode}');
       print('Response body length: ${response.body.length}');
@@ -128,25 +143,38 @@ class ApiService {
         print('Response data keys: ${data.keys}');
 
         if (data['villas'] != null) {
-          print('Villas array length: ${(data['villas'] as List).length}');
-          final villas = (data['villas'] as List)
-              .map((json) {
-                print('Parsing villa: ${json['id']} - ${json['name']}');
-                return Villa.fromJson(json);
-              })
-              .toList();
-          print('Successfully fetched ${villas.length} villas');
+          final villasData = data['villas'] as List;
+          print('Villas array length: ${villasData.length}');
+
+          final villas = <Villa>[];
+          for (var i = 0; i < villasData.length; i++) {
+            try {
+              final villaJson = villasData[i];
+              print('Parsing villa $i: ID=${villaJson['id']}, Name=${villaJson['name']}');
+              villas.add(Villa.fromJson(villaJson));
+            } catch (e) {
+              print('ERROR parsing villa $i: $e');
+            }
+          }
+
+          print('Successfully parsed ${villas.length} villas');
+          print('═══════════════════════════════════════');
           return villas;
         } else {
           print('ERROR: No villas key in response');
+          print('Available keys: ${data.keys.join(", ")}');
         }
       } else {
-        print('ERROR: Failed to fetch villas: ${response.statusCode}');
+        print('ERROR: HTTP ${response.statusCode}');
+        print('Response body: ${response.body}');
       }
+      print('═══════════════════════════════════════');
       return [];
     } catch (e, stackTrace) {
-      print('ERROR fetching villas: $e');
+      print('═══════════════════════════════════════');
+      print('EXCEPTION fetching villas: $e');
       print('Stack trace: $stackTrace');
+      print('═══════════════════════════════════════');
       return [];
     }
   }

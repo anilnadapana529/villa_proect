@@ -14,24 +14,29 @@ class VillaProvider with ChangeNotifier {
   String? get error => _error;
 
   Future<void> fetchVillas() async {
+    print('\n🔄 VillaProvider: Starting fetchVillas...');
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      print('VillaProvider: Starting fetch villas...');
       _villas = await ApiService.getVillas();
-      print('VillaProvider: Received ${_villas.length} villas');
+      print('✅ VillaProvider: Received ${_villas.length} villas');
 
       if (_villas.isEmpty) {
-        _error = 'No villas available at the moment';
+        print('⚠️ VillaProvider: No villas received from API');
+        _error = 'No villas available. Please check your internet connection.';
+      } else {
+        _error = null;
       }
 
       _isLoading = false;
       notifyListeners();
-    } catch (e) {
-      print('VillaProvider: Error - $e');
-      _error = 'Failed to load villas: $e';
+      print('✅ VillaProvider: fetchVillas completed\n');
+    } catch (e, stackTrace) {
+      print('❌ VillaProvider: Error - $e');
+      print('Stack trace: $stackTrace');
+      _error = 'Failed to load villas. Please check your connection.';
       _isLoading = false;
       notifyListeners();
     }
