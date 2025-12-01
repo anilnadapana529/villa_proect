@@ -45,34 +45,42 @@ class Villa {
   });
 
   factory Villa.fromJson(Map<String, dynamic> json) {
-    List<String> imagesList = [];
-    if (json['images'] != null) {
-      if (json['images'] is String) {
-        imagesList = (json['images'] as String).split(',').map((e) => e.trim()).toList();
-      } else if (json['images'] is List) {
-        imagesList = List<String>.from(json['images']);
+    try {
+      List<String> imagesList = [];
+      if (json['images'] != null) {
+        if (json['images'] is String) {
+          imagesList = (json['images'] as String).split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+        } else if (json['images'] is List) {
+          imagesList = List<String>.from(json['images']);
+        }
       }
-    }
 
-    return Villa(
-      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
-      ownerId: int.tryParse(json['owner_id']?.toString() ?? '0') ?? 0,
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      location: json['location'] ?? '',
-      pricePerNight: double.tryParse(json['price_per_night']?.toString() ?? '0') ?? 0.0,
-      bedrooms: int.tryParse(json['bedrooms']?.toString() ?? '0') ?? 0,
-      bathrooms: int.tryParse(json['bathrooms']?.toString() ?? '0') ?? 0,
-      maxGuests: int.tryParse(json['max_guests']?.toString() ?? '0') ?? 0,
-      image: json['image'],
-      images: imagesList,
-      amenities: json['amenities'] ?? '',
-      status: json['status'] ?? 'pending',
-      rating: json['rating'] != null ? double.tryParse(json['rating'].toString()) : null,
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updated_at'] ?? DateTime.now().toIso8601String()),
-      ownerName: json['owner_name'],
-    );
+      final priceValue = json['price_per_night'] ?? json['price'] ?? json['weekday_price'] ?? '0';
+
+      return Villa(
+        id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+        ownerId: int.tryParse(json['owner_id']?.toString() ?? '0') ?? 0,
+        title: json['title'] ?? json['name'] ?? '',
+        description: json['description'] ?? '',
+        location: json['location'] ?? json['city'] ?? '',
+        pricePerNight: double.tryParse(priceValue.toString()) ?? 0.0,
+        bedrooms: int.tryParse(json['bedrooms']?.toString() ?? '0') ?? 0,
+        bathrooms: int.tryParse(json['bathrooms']?.toString() ?? '0') ?? 0,
+        maxGuests: int.tryParse(json['max_guests']?.toString() ?? json['guests']?.toString() ?? '0') ?? 0,
+        image: json['image'],
+        images: imagesList,
+        amenities: json['amenities'] ?? '',
+        status: json['status'] ?? 'pending',
+        rating: json['rating'] != null ? double.tryParse(json['rating'].toString()) : null,
+        createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? '') ?? DateTime.now(),
+        ownerName: json['owner_name'],
+      );
+    } catch (e) {
+      print('ERROR parsing villa JSON: $e');
+      print('JSON data: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {

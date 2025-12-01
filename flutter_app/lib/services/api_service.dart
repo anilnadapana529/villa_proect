@@ -117,29 +117,36 @@ class ApiService {
       print('Fetching villas from: $baseUrl/villas');
       final response = await http.get(
         Uri.parse('$baseUrl/villas'),
-        headers: await getHeaders(includeAuth: false),
+        headers: await getHeaders(includeAuth: true),
       ).timeout(const Duration(seconds: 15));
 
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}...');
+      print('Response body length: ${response.body.length}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print('Response data keys: ${data.keys}');
+
         if (data['villas'] != null) {
+          print('Villas array length: ${(data['villas'] as List).length}');
           final villas = (data['villas'] as List)
-              .map((json) => Villa.fromJson(json))
+              .map((json) {
+                print('Parsing villa: ${json['id']} - ${json['name']}');
+                return Villa.fromJson(json);
+              })
               .toList();
-          print('Fetched ${villas.length} villas');
+          print('Successfully fetched ${villas.length} villas');
           return villas;
         } else {
-          print('No villas key in response');
+          print('ERROR: No villas key in response');
         }
       } else {
-        print('Failed to fetch villas: ${response.statusCode}');
+        print('ERROR: Failed to fetch villas: ${response.statusCode}');
       }
       return [];
-    } catch (e) {
-      print('Error fetching villas: $e');
+    } catch (e, stackTrace) {
+      print('ERROR fetching villas: $e');
+      print('Stack trace: $stackTrace');
       return [];
     }
   }
@@ -148,7 +155,7 @@ class ApiService {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/villas/$id'),
-        headers: await getHeaders(includeAuth: false),
+        headers: await getHeaders(includeAuth: true),
       );
 
       if (response.statusCode == 200) {
@@ -233,7 +240,7 @@ class ApiService {
       final uri = Uri.parse('$baseUrl/search').replace(queryParameters: queryParams);
       final response = await http.get(
         uri,
-        headers: await getHeaders(includeAuth: false),
+        headers: await getHeaders(includeAuth: true),
       );
 
       if (response.statusCode == 200) {
