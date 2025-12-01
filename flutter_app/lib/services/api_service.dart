@@ -114,21 +114,32 @@ class ApiService {
 
   static Future<List<Villa>> getVillas() async {
     try {
+      print('Fetching villas from: $baseUrl/villas');
       final response = await http.get(
         Uri.parse('$baseUrl/villas'),
         headers: await getHeaders(includeAuth: true),
-      );
+      ).timeout(const Duration(seconds: 15));
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['villas'] != null) {
-          return (data['villas'] as List)
+          final villas = (data['villas'] as List)
               .map((json) => Villa.fromJson(json))
               .toList();
+          print('Fetched ${villas.length} villas');
+          return villas;
+        } else {
+          print('No villas key in response');
         }
+      } else {
+        print('Failed to fetch villas: ${response.statusCode}');
       }
       return [];
     } catch (e) {
+      print('Error fetching villas: $e');
       return [];
     }
   }

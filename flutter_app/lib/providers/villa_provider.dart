@@ -19,10 +19,18 @@ class VillaProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      print('VillaProvider: Starting fetch villas...');
       _villas = await ApiService.getVillas();
+      print('VillaProvider: Received ${_villas.length} villas');
+
+      if (_villas.isEmpty) {
+        _error = 'No villas available at the moment';
+      }
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
+      print('VillaProvider: Error - $e');
       _error = 'Failed to load villas: $e';
       _isLoading = false;
       notifyListeners();
