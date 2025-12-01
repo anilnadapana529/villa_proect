@@ -16,6 +16,12 @@ import 'screens/dashboard/owner_dashboard_screen.dart';
 import 'screens/dashboard/admin_dashboard_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+  };
+
   runApp(const MyApp());
 }
 
@@ -39,7 +45,7 @@ class MyApp extends StatelessWidget {
             primary: const Color(0xFF1E3A8A),
             secondary: const Color(0xFF3B82F6),
           ),
-          textTheme: GoogleFonts.poppinsTextTheme(),
+          fontFamily: GoogleFonts.poppins().fontFamily,
           useMaterial3: true,
           appBarTheme: const AppBarTheme(
             elevation: 0,
